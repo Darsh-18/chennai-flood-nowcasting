@@ -1,0 +1,76 @@
+[TITLE]
+;;Project: SIH Urban Flood Nowcasting Pilot Model
+
+[OPTIONS]
+FLOW_UNITS           CMS
+INFILTRATION         HORTON
+FLOW_ROUTING         DYNAMICWAVE
+START_DATE           09/03/2026
+START_TIME           00:00:00
+REPORT_START_DATE    09/03/2026
+REPORT_START_TIME    00:00:00
+END_DATE             09/03/2026
+END_TIME             06:00:00
+REPORT_STEP          00:05:00
+WET_STEP             00:05:00
+DRY_STEP             01:00:00
+ROUTING_STEP         00:00:15
+ALLOW_PONDING        YES
+
+[RAINGAGES]
+;;Name           Format    Interval SCF      Source
+RG1              INTENSITY 0:15     1.0      TIMESERIES TS_RAIN
+
+[SUBCATCHMENTS]
+;;Name           Gage     Out Node   Area     %Imperv  Width    Slope    CurbLen 
+S1               RG1      J1         5.0      75.0     200      0.5      0       
+
+[SUBAREAS]
+;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     %Zero   
+S1               0.012      0.1        1.5        5.0        25      
+
+[INFILTRATION]
+;;Subcatchment   MaxRate    MinRate    Decay      DryTime    MaxInfil
+S1               75.0       10.0       4.0        7          0       
+
+[JUNCTIONS]
+;;Name           Elevation  MaxDepth   InitDepth  SurDepth   Aponded 
+J1               10.0       2.0        0.0        0.0        100.0
+J2               8.5        2.0        0.0        0.0        100.0
+
+[CONDUITS]
+;;Name           From Node  To Node    Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow 
+C1               J1         J2         300        0.013      0          0          0          0       
+C2               J2         OUT1       150        0.013      0          0          0          0       
+
+[XSECTIONS]
+;;Link           Shape      Geom1      Geom2      Geom3      Geom4      Barrels
+C1               CIRCULAR   1.2        0          0          0          1
+C2               CIRCULAR   1.2        0          0          0          1
+
+[OUTFALLS]
+;;Name           Elevation  Type       Stage Data Gated
+OUT1             7.0        FREE                  NO
+
+[TIMESERIES]
+;;Name           Date       Time       Value     
+TS_RAIN          09/03/2026 00:00      0.0
+TS_RAIN          09/03/2026 01:00      15.0
+TS_RAIN          09/03/2026 02:00      45.0
+TS_RAIN          09/03/2026 03:00      85.0
+TS_RAIN          09/03/2026 04:00      20.0
+TS_RAIN          09/03/2026 05:00      5.0
+TS_RAIN          09/03/2026 06:00      0.0
+
+[COORDINATES]
+;;Node           X-Coord          Y-Coord
+J1               80.2707          13.0827
+J2               80.2735          13.0850
+OUT1             80.2760          13.0872
+
+[REPORT]
+INPUT            NO
+CONTROLS         NO
+SUBCATCHMENTS    ALL
+NODES            ALL
+LINKS            ALL

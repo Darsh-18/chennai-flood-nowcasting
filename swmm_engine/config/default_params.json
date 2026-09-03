@@ -1,0 +1,30 @@
+{
+  "assumptions": {
+    "pipe_diameter_m": {
+      "value": 1.2,
+      "source": "engineering_assumption",
+      "status": "ASSUMED",
+      "justification": "Standard urban stormwater trunk conduit size for pilot network."
+    },
+    "manning_n_concrete": {
+      "value": 0.013,
+      "source": "literature",
+      "status": "STANDARD_SPEC",
+      "justification": "Manning roughness coefficient for smooth finished concrete pipes."
+    }
+  },
+  "scenarios": {
+    "normal": {
+      "roughness_multiplier": 1.0,
+      "description": "Clean drainage network operating at 100% capacity."
+    },
+    "reduced_capacity": {
+      "roughness_multiplier": 1.6,
+      "description": "40% blockage causing increased hydraulic friction."
+    },
+    "severe_blockage": {
+      "roughness_multiplier": 2.5,
+      "description": "70% blockage causing backwater effects and overflow."
+    }
+  }
+}
