@@ -1,0 +1,46 @@
+{
+  "layers": [
+    {
+      "name": "Pilot Zone (illustrative boundary)",
+      "status": "Demo",
+      "classification": "SIMULATED",
+      "detail": "Configurable bounded pilot basin used for the prototype."
+    },
+    {
+      "name": "Rainfall replay scenarios",
+      "status": "Historical",
+      "classification": "OBSERVED",
+      "detail": "Bundled deterministic intensity curves for offline demonstration."
+    },
+    {
+      "name": "Terrain / DEM proxy grid",
+      "status": "Demo",
+      "classification": "INFERRED",
+      "detail": "Coarse 30 m-class proxy factors for terrain and flow accumulation."
+    },
+    {
+      "name": "Drainage capacity scenario",
+      "status": "Demo",
+      "classification": "SIMULATED",
+      "detail": "Illustrative capacity and degradation controls, not pipe inventory."
+    },
+    {
+      "name": "Road network subset",
+      "status": "Demo",
+      "classification": "SIMULATED",
+      "detail": "Synthetic but connected road graph for routing demonstrations."
+    },
+    {
+      "name": "Local basemap context",
+      "status": "Demo",
+      "classification": "SIMULATED",
+      "detail": "Offline land-use, canal, and local corridor shapes used only to make the pilot map readable."
+    },
+    {
+      "name": "Flood depth bands",
+      "status": "Available",
+      "classification": "DERIVED",
+      "detail": "Derived from the reduced-order runoff, drainage, and terrain chain."
+    }
+  ]
+}

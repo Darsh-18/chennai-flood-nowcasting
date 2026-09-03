@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.235,
+              13.03
+            ],
+            [
+              80.265,
+              13.03
+            ],
+            [
+              80.265,
+              13.06
+            ],
+            [
+              80.235,
+              13.06
+            ],
+            [
+              80.235,
+              13.03
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Pilot Zone (illustrative boundary)",
+        "classification": "SIMULATED",
+        "area_note": "Configurable 5-15 km2 pilot basin boundary for demo use."
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.238,
+          13.057
+        ]
+      },
+      "properties": {
+        "infra_id": "hospital-north",
+        "name": "Demo Hospital Node",
+        "type": "Hospital",
+        "classification": "SIMULATED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.238,
+          13.033
+        ]
+      },
+      "properties": {
+        "infra_id": "fire-station-west",
+        "name": "Demo Fire Station Node",
+        "type": "Fire Station",
+        "classification": "SIMULATED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          80.262,
+          13.033
+        ]
+      },
+      "properties": {
+        "infra_id": "relief-center-south",
+        "name": "Demo Relief Center Node",
+        "type": "Relief Center",
+        "classification": "SIMULATED"
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.237,
+            13.045
+          ],
+          [
+            80.263,
+            13.045
+          ]
+        ]
+      },
+      "properties": {
+        "drain_id": "drain-east-west",
+        "name": "Illustrative trunk drain",
+        "classification": "SIMULATED",
+        "label": "SIMULATED SCENARIO",
+        "base_capacity_note": "Scenario capacity only; not municipal pipe data."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.25,
+            13.058
+          ],
+          [
+            80.25,
+            13.032
+          ]
+        ]
+      },
+      "properties": {
+        "drain_id": "drain-north-south",
+        "name": "Illustrative relief drain",
+        "classification": "SIMULATED",
+        "label": "SIMULATED SCENARIO",
+        "base_capacity_note": "Scenario capacity only; not municipal pipe data."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            80.242,
+            13.052
+          ],
+          [
+            80.259,
+            13.035
+          ]
+        ]
+      },
+      "properties": {
+        "drain_id": "drain-diagonal-low-pocket",
+        "name": "Illustrative low-pocket drain",
+        "classification": "SIMULATED",
+        "label": "SIMULATED SCENARIO",
+        "base_capacity_note": "Scenario capacity only; not municipal pipe data."
+      }
+    }
+  ]
+}

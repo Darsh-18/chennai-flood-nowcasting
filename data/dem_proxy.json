@@ -1,0 +1,1521 @@
+{
+  "name": "Illustrative 30 m-class DEM proxy grid",
+  "classification": "INFERRED",
+  "zone_area_km2": 10.84,
+  "rows": 6,
+  "cols": 6,
+  "cells": [
+    {
+      "cell_id": "cell-r0-c0",
+      "row": 0,
+      "col": 0,
+      "centroid": [
+        80.2375,
+        13.0325
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.235,
+              13.03
+            ],
+            [
+              80.24,
+              13.03
+            ],
+            [
+              80.24,
+              13.035
+            ],
+            [
+              80.235,
+              13.035
+            ],
+            [
+              80.235,
+              13.03
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.28,
+      "accumulation_factor": 2.25,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 7.8,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c1"
+    },
+    {
+      "cell_id": "cell-r0-c1",
+      "row": 0,
+      "col": 1,
+      "centroid": [
+        80.2425,
+        13.0325
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.24,
+              13.03
+            ],
+            [
+              80.245,
+              13.03
+            ],
+            [
+              80.245,
+              13.035
+            ],
+            [
+              80.24,
+              13.035
+            ],
+            [
+              80.24,
+              13.03
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.39,
+      "accumulation_factor": 2.59,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 7.22,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c2"
+    },
+    {
+      "cell_id": "cell-r0-c2",
+      "row": 0,
+      "col": 2,
+      "centroid": [
+        80.2475,
+        13.0325
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.245,
+              13.03
+            ],
+            [
+              80.25,
+              13.03
+            ],
+            [
+              80.25,
+              13.035
+            ],
+            [
+              80.245,
+              13.035
+            ],
+            [
+              80.245,
+              13.03
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.5,
+      "accumulation_factor": 2.93,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.64,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c3"
+    },
+    {
+      "cell_id": "cell-r0-c3",
+      "row": 0,
+      "col": 3,
+      "centroid": [
+        80.2525,
+        13.0325
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.25,
+              13.03
+            ],
+            [
+              80.255,
+              13.03
+            ],
+            [
+              80.255,
+              13.035
+            ],
+            [
+              80.25,
+              13.035
+            ],
+            [
+              80.25,
+              13.03
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.61,
+      "accumulation_factor": 3.27,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.06,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c4"
+    },
+    {
+      "cell_id": "cell-r0-c4",
+      "row": 0,
+      "col": 4,
+      "centroid": [
+        80.2575,
+        13.0325
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.255,
+              13.03
+            ],
+            [
+              80.26,
+              13.03
+            ],
+            [
+              80.26,
+              13.035
+            ],
+            [
+              80.255,
+              13.035
+            ],
+            [
+              80.255,
+              13.03
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.72,
+      "accumulation_factor": 3.61,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 5.48,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c5"
+    },
+    {
+      "cell_id": "cell-r0-c5",
+      "row": 0,
+      "col": 5,
+      "centroid": [
+        80.2625,
+        13.0325
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.26,
+              13.03
+            ],
+            [
+              80.265,
+              13.03
+            ],
+            [
+              80.265,
+              13.035
+            ],
+            [
+              80.26,
+              13.035
+            ],
+            [
+              80.26,
+              13.03
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.83,
+      "accumulation_factor": 3.95,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 4.9,
+      "classification": "INFERRED",
+      "downstream_cell_id": null
+    },
+    {
+      "cell_id": "cell-r1-c0",
+      "row": 1,
+      "col": 0,
+      "centroid": [
+        80.2375,
+        13.0375
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.235,
+              13.035
+            ],
+            [
+              80.24,
+              13.035
+            ],
+            [
+              80.24,
+              13.04
+            ],
+            [
+              80.235,
+              13.04
+            ],
+            [
+              80.235,
+              13.035
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.22,
+      "accumulation_factor": 2.47,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 7.96,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c1"
+    },
+    {
+      "cell_id": "cell-r1-c1",
+      "row": 1,
+      "col": 1,
+      "centroid": [
+        80.2425,
+        13.0375
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.24,
+              13.035
+            ],
+            [
+              80.245,
+              13.035
+            ],
+            [
+              80.245,
+              13.04
+            ],
+            [
+              80.24,
+              13.04
+            ],
+            [
+              80.24,
+              13.035
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.33,
+      "accumulation_factor": 2.81,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 7.38,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c2"
+    },
+    {
+      "cell_id": "cell-r1-c2",
+      "row": 1,
+      "col": 2,
+      "centroid": [
+        80.2475,
+        13.0375
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.245,
+              13.035
+            ],
+            [
+              80.25,
+              13.035
+            ],
+            [
+              80.25,
+              13.04
+            ],
+            [
+              80.245,
+              13.04
+            ],
+            [
+              80.245,
+              13.035
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.44,
+      "accumulation_factor": 3.15,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.8,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c3"
+    },
+    {
+      "cell_id": "cell-r1-c3",
+      "row": 1,
+      "col": 3,
+      "centroid": [
+        80.2525,
+        13.0375
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.25,
+              13.035
+            ],
+            [
+              80.255,
+              13.035
+            ],
+            [
+              80.255,
+              13.04
+            ],
+            [
+              80.25,
+              13.04
+            ],
+            [
+              80.25,
+              13.035
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.55,
+      "accumulation_factor": 3.49,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.22,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c4"
+    },
+    {
+      "cell_id": "cell-r1-c4",
+      "row": 1,
+      "col": 4,
+      "centroid": [
+        80.2575,
+        13.0375
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.255,
+              13.035
+            ],
+            [
+              80.26,
+              13.035
+            ],
+            [
+              80.26,
+              13.04
+            ],
+            [
+              80.255,
+              13.04
+            ],
+            [
+              80.255,
+              13.035
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.66,
+      "accumulation_factor": 3.83,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 5.64,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c5"
+    },
+    {
+      "cell_id": "cell-r1-c5",
+      "row": 1,
+      "col": 5,
+      "centroid": [
+        80.2625,
+        13.0375
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.26,
+              13.035
+            ],
+            [
+              80.265,
+              13.035
+            ],
+            [
+              80.265,
+              13.04
+            ],
+            [
+              80.26,
+              13.04
+            ],
+            [
+              80.26,
+              13.035
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.77,
+      "accumulation_factor": 4.17,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 5.06,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r0-c5"
+    },
+    {
+      "cell_id": "cell-r2-c0",
+      "row": 2,
+      "col": 0,
+      "centroid": [
+        80.2375,
+        13.0425
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.235,
+              13.04
+            ],
+            [
+              80.24,
+              13.04
+            ],
+            [
+              80.24,
+              13.045
+            ],
+            [
+              80.235,
+              13.045
+            ],
+            [
+              80.235,
+              13.04
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.16,
+      "accumulation_factor": 2.69,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 8.12,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r1-c1"
+    },
+    {
+      "cell_id": "cell-r2-c1",
+      "row": 2,
+      "col": 1,
+      "centroid": [
+        80.2425,
+        13.0425
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.24,
+              13.04
+            ],
+            [
+              80.245,
+              13.04
+            ],
+            [
+              80.245,
+              13.045
+            ],
+            [
+              80.24,
+              13.045
+            ],
+            [
+              80.24,
+              13.04
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.27,
+      "accumulation_factor": 3.03,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 7.54,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c2"
+    },
+    {
+      "cell_id": "cell-r2-c2",
+      "row": 2,
+      "col": 2,
+      "centroid": [
+        80.2475,
+        13.0425
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.245,
+              13.04
+            ],
+            [
+              80.25,
+              13.04
+            ],
+            [
+              80.25,
+              13.045
+            ],
+            [
+              80.245,
+              13.045
+            ],
+            [
+              80.245,
+              13.04
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.56,
+      "accumulation_factor": 5.02,
+      "base_drainage_capacity_cm_per_step": 0.76,
+      "elevation_proxy_m": 6.11,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c3"
+    },
+    {
+      "cell_id": "cell-r2-c3",
+      "row": 2,
+      "col": 3,
+      "centroid": [
+        80.2525,
+        13.0425
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.25,
+              13.04
+            ],
+            [
+              80.255,
+              13.04
+            ],
+            [
+              80.255,
+              13.045
+            ],
+            [
+              80.25,
+              13.045
+            ],
+            [
+              80.25,
+              13.04
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.67,
+      "accumulation_factor": 5.36,
+      "base_drainage_capacity_cm_per_step": 0.76,
+      "elevation_proxy_m": 5.53,
+      "classification": "INFERRED",
+      "downstream_cell_id": null
+    },
+    {
+      "cell_id": "cell-r2-c4",
+      "row": 2,
+      "col": 4,
+      "centroid": [
+        80.2575,
+        13.0425
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.255,
+              13.04
+            ],
+            [
+              80.26,
+              13.04
+            ],
+            [
+              80.26,
+              13.045
+            ],
+            [
+              80.255,
+              13.045
+            ],
+            [
+              80.255,
+              13.04
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.6,
+      "accumulation_factor": 4.05,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 5.8,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r1-c5"
+    },
+    {
+      "cell_id": "cell-r2-c5",
+      "row": 2,
+      "col": 5,
+      "centroid": [
+        80.2625,
+        13.0425
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.26,
+              13.04
+            ],
+            [
+              80.265,
+              13.04
+            ],
+            [
+              80.265,
+              13.045
+            ],
+            [
+              80.26,
+              13.045
+            ],
+            [
+              80.26,
+              13.04
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.71,
+      "accumulation_factor": 4.39,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 5.22,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r1-c5"
+    },
+    {
+      "cell_id": "cell-r3-c0",
+      "row": 3,
+      "col": 0,
+      "centroid": [
+        80.2375,
+        13.0475
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.235,
+              13.045
+            ],
+            [
+              80.24,
+              13.045
+            ],
+            [
+              80.24,
+              13.05
+            ],
+            [
+              80.235,
+              13.05
+            ],
+            [
+              80.235,
+              13.045
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.1,
+      "accumulation_factor": 2.91,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 8.28,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c1"
+    },
+    {
+      "cell_id": "cell-r3-c1",
+      "row": 3,
+      "col": 1,
+      "centroid": [
+        80.2425,
+        13.0475
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.24,
+              13.045
+            ],
+            [
+              80.245,
+              13.045
+            ],
+            [
+              80.245,
+              13.05
+            ],
+            [
+              80.24,
+              13.05
+            ],
+            [
+              80.24,
+              13.045
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.21,
+      "accumulation_factor": 3.25,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 7.7,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c2"
+    },
+    {
+      "cell_id": "cell-r3-c2",
+      "row": 3,
+      "col": 2,
+      "centroid": [
+        80.2475,
+        13.0475
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.245,
+              13.045
+            ],
+            [
+              80.25,
+              13.045
+            ],
+            [
+              80.25,
+              13.05
+            ],
+            [
+              80.245,
+              13.05
+            ],
+            [
+              80.245,
+              13.045
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.5,
+      "accumulation_factor": 5.24,
+      "base_drainage_capacity_cm_per_step": 0.76,
+      "elevation_proxy_m": 6.27,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c3"
+    },
+    {
+      "cell_id": "cell-r3-c3",
+      "row": 3,
+      "col": 3,
+      "centroid": [
+        80.2525,
+        13.0475
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.25,
+              13.045
+            ],
+            [
+              80.255,
+              13.045
+            ],
+            [
+              80.255,
+              13.05
+            ],
+            [
+              80.25,
+              13.05
+            ],
+            [
+              80.25,
+              13.045
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.61,
+      "accumulation_factor": 5.58,
+      "base_drainage_capacity_cm_per_step": 0.76,
+      "elevation_proxy_m": 5.69,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c3"
+    },
+    {
+      "cell_id": "cell-r3-c4",
+      "row": 3,
+      "col": 4,
+      "centroid": [
+        80.2575,
+        13.0475
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.255,
+              13.045
+            ],
+            [
+              80.26,
+              13.045
+            ],
+            [
+              80.26,
+              13.05
+            ],
+            [
+              80.255,
+              13.05
+            ],
+            [
+              80.255,
+              13.045
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.54,
+      "accumulation_factor": 4.27,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 5.96,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c5"
+    },
+    {
+      "cell_id": "cell-r3-c5",
+      "row": 3,
+      "col": 5,
+      "centroid": [
+        80.2625,
+        13.0475
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.26,
+              13.045
+            ],
+            [
+              80.265,
+              13.045
+            ],
+            [
+              80.265,
+              13.05
+            ],
+            [
+              80.26,
+              13.05
+            ],
+            [
+              80.26,
+              13.045
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.65,
+      "accumulation_factor": 4.61,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 5.38,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r2-c5"
+    },
+    {
+      "cell_id": "cell-r4-c0",
+      "row": 4,
+      "col": 0,
+      "centroid": [
+        80.2375,
+        13.0525
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.235,
+              13.05
+            ],
+            [
+              80.24,
+              13.05
+            ],
+            [
+              80.24,
+              13.055
+            ],
+            [
+              80.235,
+              13.055
+            ],
+            [
+              80.235,
+              13.05
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.04,
+      "accumulation_factor": 3.13,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 8.44,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r3-c1"
+    },
+    {
+      "cell_id": "cell-r4-c1",
+      "row": 4,
+      "col": 1,
+      "centroid": [
+        80.2425,
+        13.0525
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.24,
+              13.05
+            ],
+            [
+              80.245,
+              13.05
+            ],
+            [
+              80.245,
+              13.055
+            ],
+            [
+              80.24,
+              13.055
+            ],
+            [
+              80.24,
+              13.05
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.15,
+      "accumulation_factor": 3.47,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 7.86,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r3-c2"
+    },
+    {
+      "cell_id": "cell-r4-c2",
+      "row": 4,
+      "col": 2,
+      "centroid": [
+        80.2475,
+        13.0525
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.245,
+              13.05
+            ],
+            [
+              80.25,
+              13.05
+            ],
+            [
+              80.25,
+              13.055
+            ],
+            [
+              80.245,
+              13.055
+            ],
+            [
+              80.245,
+              13.05
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.26,
+      "accumulation_factor": 3.81,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 7.28,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r3-c3"
+    },
+    {
+      "cell_id": "cell-r4-c3",
+      "row": 4,
+      "col": 3,
+      "centroid": [
+        80.2525,
+        13.0525
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.25,
+              13.05
+            ],
+            [
+              80.255,
+              13.05
+            ],
+            [
+              80.255,
+              13.055
+            ],
+            [
+              80.25,
+              13.055
+            ],
+            [
+              80.25,
+              13.05
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.37,
+      "accumulation_factor": 4.15,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.7,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r3-c3"
+    },
+    {
+      "cell_id": "cell-r4-c4",
+      "row": 4,
+      "col": 4,
+      "centroid": [
+        80.2575,
+        13.0525
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.255,
+              13.05
+            ],
+            [
+              80.26,
+              13.05
+            ],
+            [
+              80.26,
+              13.055
+            ],
+            [
+              80.255,
+              13.055
+            ],
+            [
+              80.255,
+              13.05
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.48,
+      "accumulation_factor": 4.49,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.12,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r3-c5"
+    },
+    {
+      "cell_id": "cell-r4-c5",
+      "row": 4,
+      "col": 5,
+      "centroid": [
+        80.2625,
+        13.0525
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.26,
+              13.05
+            ],
+            [
+              80.265,
+              13.05
+            ],
+            [
+              80.265,
+              13.055
+            ],
+            [
+              80.26,
+              13.055
+            ],
+            [
+              80.26,
+              13.05
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.59,
+      "accumulation_factor": 4.83,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 5.54,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r3-c5"
+    },
+    {
+      "cell_id": "cell-r5-c0",
+      "row": 5,
+      "col": 0,
+      "centroid": [
+        80.2375,
+        13.0575
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.235,
+              13.055
+            ],
+            [
+              80.24,
+              13.055
+            ],
+            [
+              80.24,
+              13.06
+            ],
+            [
+              80.235,
+              13.06
+            ],
+            [
+              80.235,
+              13.055
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 0.98,
+      "accumulation_factor": 3.35,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 8.6,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r4-c1"
+    },
+    {
+      "cell_id": "cell-r5-c1",
+      "row": 5,
+      "col": 1,
+      "centroid": [
+        80.2425,
+        13.0575
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.24,
+              13.055
+            ],
+            [
+              80.245,
+              13.055
+            ],
+            [
+              80.245,
+              13.06
+            ],
+            [
+              80.24,
+              13.06
+            ],
+            [
+              80.24,
+              13.055
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.09,
+      "accumulation_factor": 3.69,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 8.02,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r4-c2"
+    },
+    {
+      "cell_id": "cell-r5-c2",
+      "row": 5,
+      "col": 2,
+      "centroid": [
+        80.2475,
+        13.0575
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.245,
+              13.055
+            ],
+            [
+              80.25,
+              13.055
+            ],
+            [
+              80.25,
+              13.06
+            ],
+            [
+              80.245,
+              13.06
+            ],
+            [
+              80.245,
+              13.055
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.2,
+      "accumulation_factor": 4.03,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 7.44,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r4-c3"
+    },
+    {
+      "cell_id": "cell-r5-c3",
+      "row": 5,
+      "col": 3,
+      "centroid": [
+        80.2525,
+        13.0575
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.25,
+              13.055
+            ],
+            [
+              80.255,
+              13.055
+            ],
+            [
+              80.255,
+              13.06
+            ],
+            [
+              80.25,
+              13.06
+            ],
+            [
+              80.25,
+              13.055
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.31,
+      "accumulation_factor": 4.37,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.86,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r4-c4"
+    },
+    {
+      "cell_id": "cell-r5-c4",
+      "row": 5,
+      "col": 4,
+      "centroid": [
+        80.2575,
+        13.0575
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.255,
+              13.055
+            ],
+            [
+              80.26,
+              13.055
+            ],
+            [
+              80.26,
+              13.06
+            ],
+            [
+              80.255,
+              13.06
+            ],
+            [
+              80.255,
+              13.055
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.42,
+      "accumulation_factor": 4.71,
+      "base_drainage_capacity_cm_per_step": 1.1,
+      "elevation_proxy_m": 6.28,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r4-c5"
+    },
+    {
+      "cell_id": "cell-r5-c5",
+      "row": 5,
+      "col": 5,
+      "centroid": [
+        80.2625,
+        13.0575
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.26,
+              13.055
+            ],
+            [
+              80.265,
+              13.055
+            ],
+            [
+              80.265,
+              13.06
+            ],
+            [
+              80.26,
+              13.06
+            ],
+            [
+              80.26,
+              13.055
+            ]
+          ]
+        ]
+      },
+      "terrain_factor": 1.53,
+      "accumulation_factor": 5.05,
+      "base_drainage_capacity_cm_per_step": 1.2,
+      "elevation_proxy_m": 5.7,
+      "classification": "INFERRED",
+      "downstream_cell_id": "cell-r4-c5"
+    }
+  ]
+}
