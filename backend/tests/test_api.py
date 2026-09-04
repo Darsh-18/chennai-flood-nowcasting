@@ -91,3 +91,14 @@ def test_map_layers_router_returns_context_and_boundary() -> None:
     assert boundary.status_code == 200
     assert context.json()["features"]
     assert boundary.json()["features"][0]["properties"]["name"] == "Pilot Zone (illustrative boundary)"
+
+
+def test_weather_router_returns_valid_structure() -> None:
+    response = client.get("/api/weather")
+    assert response.status_code == 200
+    data = response.json()
+    assert "isLive" in data
+    if data["isLive"]:
+        assert "temperature" in data
+        assert "humidity" in data
+        assert "weatherDescription" in data

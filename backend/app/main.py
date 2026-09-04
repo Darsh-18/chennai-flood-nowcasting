@@ -16,6 +16,7 @@ from app.routers import (
     nowcast,
     route,
     scenario,
+    weather,
 )
 
 app = FastAPI(
@@ -54,3 +55,4 @@ app.include_router(data_status.router)
 app.include_router(critical_infrastructure.router)
 app.include_router(health.router)
 app.include_router(map_layers.router)
+app.include_router(weather.router)
