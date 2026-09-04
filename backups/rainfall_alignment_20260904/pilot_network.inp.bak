@@ -4,14 +4,13 @@
 [OPTIONS]
 FLOW_UNITS           CMS
 INFILTRATION         HORTON
-;; EPA SWMM 5.2 keyword for dynamic-wave routing (not DYNAMICWAVE).
-FLOW_ROUTING         DYNWAVE
-START_DATE           11/28/2015
+FLOW_ROUTING         DYNAMICWAVE
+START_DATE           09/03/2026
 START_TIME           00:00:00
-REPORT_START_DATE    11/28/2015
+REPORT_START_DATE    09/03/2026
 REPORT_START_TIME    00:00:00
-END_DATE             12/04/2015
-END_TIME             23:30:00
+END_DATE             09/03/2026
+END_TIME             06:00:00
 REPORT_STEP          00:05:00
 WET_STEP             00:05:00
 DRY_STEP             01:00:00
@@ -20,15 +19,15 @@ ALLOW_PONDING        YES
 
 [RAINGAGES]
 ;;Name           Format    Interval SCF      Source
-RG1              INTENSITY 0:30     1.0      TIMESERIES TS_RAIN
+RG1              INTENSITY 0:15     1.0      TIMESERIES TS_RAIN
 
 [SUBCATCHMENTS]
 ;;Name           Gage     Out Node   Area     %Imperv  Width    Slope    CurbLen 
 S1               RG1      J1         5.0      75.0     200      0.5      0       
 
 [SUBAREAS]
-;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     %Zero   RouteTo  %Routed
-S1               0.012      0.1        1.5        5.0        25      OUTLET   100
+;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     %Zero   
+S1               0.012      0.1        1.5        5.0        25      
 
 [INFILTRATION]
 ;;Subcatchment   MaxRate    MinRate    Decay      DryTime    MaxInfil

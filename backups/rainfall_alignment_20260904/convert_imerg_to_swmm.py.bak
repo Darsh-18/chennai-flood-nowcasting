@@ -1,0 +1,50 @@
+from pathlib import Path
+import xarray as xr
+import pandas as pd
+
+INPUT = Path("data/raw/rainfall/chennai_imerg_2015.nc")
+OUTPUT = Path("data/rainfall/chennai_imerg_2015.csv")
+
+OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+
+# Load IMERG
+ds = xr.open_dataset(INPUT)
+
+# Get precipitation: time × latitude × longitude
+rain = ds["precipitation"]
+
+# Spatial average across the Chennai grid
+rain_mean = rain.mean(dim=["latitude", "longitude"])
+
+# Convert to pandas Series
+df = rain_mean.to_series().reset_index()
+
+df.columns = ["timestamp", "rainfall_mm"]
+
+# IMERG is mm/hr.
+# SWMM RAINGAGE is configured as INTENSITY, so preserve mm/hr.
+# Resample 30-minute data to 15-minute intervals.
+df = (
+    df.set_index("timestamp")
+      .resample("15min")
+      .interpolate(method="linear")
+      .reset_index()
+)
+
+# Remove invalid values
+df["rainfall_mm"] = pd.to_numeric(df["rainfall_mm"], errors="coerce")
+df["rainfall_mm"] = df["rainfall_mm"].clip(lower=0)
+df = df.dropna()
+
+# SWMM rainfall.py requires this timestamp format
+df["timestamp"] = df["timestamp"].dt.strftime("%m/%d/%Y %H:%M")
+
+df.to_csv(OUTPUT, index=False)
+
+print(f"Created: {OUTPUT}")
+print(f"Rows: {len(df)}")
+print("\nFirst 10 rows:")
+print(df.head(10).to_string(index=False))
+
+print("\nRainfall statistics:")
+print(df["rainfall_mm"].describe())

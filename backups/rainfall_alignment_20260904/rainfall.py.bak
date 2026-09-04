@@ -9,8 +9,6 @@ Public API
 """
 
 import csv
-from datetime import datetime
-import math
 import os
 
 
@@ -27,8 +25,7 @@ def inject_rainfall(
     ----------
     csv_path : str
         Path to the CSV file with columns ``timestamp`` (MM/DD/YYYY HH:MM)
-        and ``rainfall_mm``.  For the configured ``INTENSITY`` rain gage,
-        ``rainfall_mm`` is a rainfall rate in mm/hr.
+        and ``rainfall_mm``.
     base_inp_path : str
         Path to the SWMM template .inp file to use as the base.
     target_inp_path : str
@@ -64,26 +61,21 @@ def inject_rainfall(
     with open(csv_path, newline="", encoding="utf-8") as fh:
         reader = csv.DictReader(fh)
         for line_num, row in enumerate(reader, start=2):  # row 1 = header
-            try:
-                timestamp = row["timestamp"].strip()
-                raw_value = row["rainfall_mm"].strip()
-                parsed_timestamp = datetime.strptime(timestamp, "%m/%d/%Y %H:%M")
-                value = float(raw_value)
-            except (KeyError, AttributeError, TypeError, ValueError) as exc:
-                raise ValueError(
-                    f"Invalid rainfall CSV row {line_num}; expected timestamp "
-                    "MM/DD/YYYY HH:MM and numeric rainfall_mm."
-                ) from exc
+            timestamp: str = row["timestamp"].strip()
+            raw_value: str = row["rainfall_mm"].strip()
 
-            if not math.isfinite(value) or value < 0:
+            value = float(raw_value)
+
+            if value < 0:
                 raise ValueError(
-                    f"Invalid rainfall value detected (must be finite and non-negative). "
+                    f"Negative rainfall value detected. "
                     f"(row {line_num}: timestamp={timestamp}, rainfall_mm={value})"
                 )
 
-            # Reformat the parsed value to ensure valid SWMM date/time fields.
-            date_part = parsed_timestamp.strftime("%m/%d/%Y")
-            time_part = parsed_timestamp.strftime("%H:%M")
+            # Split "MM/DD/YYYY HH:MM" → date and time parts for SWMM format
+            parts = timestamp.split()
+            date_part = parts[0]          # MM/DD/YYYY
+            time_part = parts[1] if len(parts) > 1 else "00:00"  # HH:MM
 
             # SWMM timeseries format: <Name>  <Date>  <Time>  <Value>
             rainfall_rows.append(

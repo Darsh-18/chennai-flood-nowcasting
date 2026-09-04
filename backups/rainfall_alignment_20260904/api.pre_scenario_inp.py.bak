@@ -21,7 +21,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from swmm_engine.rainfall import inject_rainfall
-from swmm_engine.runner import prepare_scenario_inp, run_swmm_simulation
+from swmm_engine.runner import run_swmm_simulation
 
 # ---------------------------------------------------------------------------
 # App instance
@@ -77,33 +77,19 @@ async def simulate(request: SimulationRequest) -> dict:
       the CSV is validated and injected into the model before the run.
     """
 
-    # Build a scenario-specific model before rainfall injection. The base
-    # template remains unchanged and PySWMM never mutates conduit roughness.
-    base_inp_path: str = "swmm_engine/models/pilot_network.inp"
-    scenario_inp_path: str = f"swmm_engine/outputs/scenario_{request.scenario}.inp"
-    try:
-        prepare_scenario_inp(
-            base_inp_path=base_inp_path,
-            target_inp_path=scenario_inp_path,
-            scenario_name=request.scenario,
-        )
-    except (FileNotFoundError, ValueError) as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-    inp_path: str = scenario_inp_path
+    # Base model template (committed to the repo; read-only)
+    inp_path: str = "swmm_engine/models/pilot_network.inp"
 
     # ------------------------------------------------------------------
     # Optional rainfall injection
     # ------------------------------------------------------------------
     if request.rainfall_csv_path is not None:
-        temp_inp_path: str = (
-            f"swmm_engine/outputs/temp_injected_{request.scenario}.inp"
-        )
+        temp_inp_path: str = "swmm_engine/outputs/temp_injected.inp"
 
         try:
             inject_rainfall(
                 csv_path=request.rainfall_csv_path,
-                base_inp_path=scenario_inp_path,
+                base_inp_path=inp_path,
                 target_inp_path=temp_inp_path,
             )
         except FileNotFoundError as exc:
@@ -130,7 +116,6 @@ async def simulate(request: SimulationRequest) -> dict:
     result: dict = run_swmm_simulation(
         inp_path=inp_path,
         scenario_name=request.scenario,
-        scenario_applied=True,
     )
 
     # ------------------------------------------------------------------

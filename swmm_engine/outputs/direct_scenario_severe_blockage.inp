@@ -41,8 +41,8 @@ J2               8.5        2.0        0.0        0.0        100.0
 
 [CONDUITS]
 ;;Name           From Node  To Node    Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow 
-C1               J1         J2         300        0.013      0          0          0          0       
-C2               J2         OUT1       150        0.013      0          0          0          0       
+C1  J1  J2  300  0.0325  0  0  0  0
+C2  J2  OUT1  150  0.0325  0  0  0  0
 
 [XSECTIONS]
 ;;Link           Shape      Geom1      Geom2      Geom3      Geom4      Barrels
