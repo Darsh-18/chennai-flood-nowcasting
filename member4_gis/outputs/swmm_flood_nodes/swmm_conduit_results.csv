@@ -1,0 +1,7 @@
+link_id,link_type,max_flow_cms,max_velocity_ms,max_full_flow_ratio,scenario,event_id
+C1,CONDUIT,0.306,1.77,0.11,normal,imerg-2015-11-28_normal
+C2,CONDUIT,0.306,2.05,0.08,normal,imerg-2015-11-28_normal
+C1,CONDUIT,0.306,1.24,0.18,reduced_capacity,imerg-2015-11-28_reduced_capacity
+C2,CONDUIT,0.305,1.47,0.13,reduced_capacity,imerg-2015-11-28_reduced_capacity
+C1,CONDUIT,0.306,0.85,0.28,severe_blockage,imerg-2015-11-28_severe_blockage
+C2,CONDUIT,0.305,1.15,0.2,severe_blockage,imerg-2015-11-28_severe_blockage

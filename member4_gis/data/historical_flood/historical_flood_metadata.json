@@ -1,0 +1,11 @@
+{
+  "status": "MISSING",
+  "searched_paths": [
+    "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/Historical Flood Events",
+    "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/Histoical Flood Events",
+    "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/historical_flood_events"
+  ],
+  "error": "No historical flood events directory found",
+  "action_required": "Add historical flood data to Datasets/Historical Flood Events/",
+  "note": "Historical flood data should contain observed flood locations from past events (e.g., 2015 Chennai floods). Acceptable formats: GeoPackage, GeoJSON, Shapefile, KML, CSV with lat/lon."
+}

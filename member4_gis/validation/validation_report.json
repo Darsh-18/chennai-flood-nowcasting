@@ -1,0 +1,29 @@
+{
+  "status": "LIMITED",
+  "method": "Nearest-neighbour distance between SWMM simulated flood nodes and historical flood observation locations. Match tolerance: 2000 m (2 km) \u2014 chosen to account for the coarse spatial resolution of the pilot model (3 nodes covering a 5 ha catchment near 80.27\u00b0E, 13.08\u00b0N).",
+  "limitations": [
+    "SWMM model is a synthetic 3-node pilot network, NOT a full Chennai hydraulic model.",
+    "Only 2 junctions (J1, J2) and 1 outfall (OUT1) are modelled, all near 80.27\u00b0E 13.08\u00b0N.",
+    "No nodes were flagged as 'flooded' (overflow > 0) under the IMERG 2015 event at pilot network scale \u2014 SWMM node depth is used as proxy instead.",
+    "A full validation requires a spatially distributed SWMM model covering Chennai.",
+    "Historical data coverage and quality affect all metrics."
+  ],
+  "simulated_nodes": {
+    "total_records": 9,
+    "normal_scenario_nodes": 3,
+    "crs": "EPSG:4326",
+    "node_ids": [
+      "J1",
+      "J2",
+      "OUT1"
+    ],
+    "max_depth_m": 0.47,
+    "flooded_count": 0
+  },
+  "historical_data": {
+    "status": "MISSING",
+    "note": "No historical flood GeoPackages found in /Users/darsh/Projects/chennai-flood-nowcasting/member4_gis/data/historical_flood. Historical flood data was not available in the repository."
+  },
+  "distance_metrics": {},
+  "conclusion": "Validation is limited because no historical flood observation data was available in the repository. The SWMM pilot model produces node depth and flow results for 3 synthetic nodes near 80.27\u00b0E, 13.08\u00b0N. A proper spatial validation requires: (1) observed flood extent/points from the 2015 Chennai floods or another event, (2) a spatially distributed SWMM model covering Chennai, (3) aligned simulation timestamps. These components are not yet available in this pilot implementation."
+}

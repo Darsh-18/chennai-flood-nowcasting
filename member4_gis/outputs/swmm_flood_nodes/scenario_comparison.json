@@ -1,0 +1,120 @@
+{
+  "generated_at": "2026-09-04T05:36:15.582034+00:00",
+  "simulation_period": {
+    "start": "2015-11-28T00:00:00+00:00",
+    "end": "2015-12-04T23:30:00+00:00"
+  },
+  "rainfall_source": "NASA GPM IMERG 30-min (2015-11-28 to 2015-12-04)",
+  "hydraulic_engine": "EPA SWMM 5.2.4 via PySWMM 2.1.0",
+  "model_type": "synthetic_pilot_network",
+  "model_coordinate_crs": "EPSG:4326",
+  "model_description": "3-node pilot network: J1 (10 m elev), J2 (8.5 m), OUT1 (7 m outfall). Two 1.2 m circular conduits (C1: 300 m, C2: 150 m). One 5 ha subcatchment (75% impervious). Coordinates near 80.27\u00b0E, 13.08\u00b0N (Chennai).",
+  "scenarios": {
+    "normal": {
+      "status": "success",
+      "rpt_file": "/Users/darsh/Projects/chennai-flood-nowcasting/swmm_engine/outputs/direct_injected_normal.rpt",
+      "total_precip_mm": 384.708,
+      "total_nodes": 3,
+      "flooded_nodes": 0,
+      "max_node_depth_m": 0.28,
+      "max_conduit_flow_cms": 0.306,
+      "max_conduit_velocity_ms": 2.05,
+      "per_node": {
+        "J1": {
+          "max_depth_m": 0.28,
+          "avg_depth_m": 0.05,
+          "max_hgl_m": 10.28,
+          "flooded": false
+        },
+        "J2": {
+          "max_depth_m": 0.23,
+          "avg_depth_m": 0.05,
+          "max_hgl_m": 8.73,
+          "flooded": false
+        },
+        "OUT1": {
+          "max_depth_m": 0.23,
+          "avg_depth_m": 0.04,
+          "max_hgl_m": 7.23,
+          "flooded": false
+        }
+      }
+    },
+    "reduced_capacity": {
+      "status": "success",
+      "rpt_file": "/Users/darsh/Projects/chennai-flood-nowcasting/swmm_engine/outputs/direct_injected_reduced_capacity.rpt",
+      "total_precip_mm": 384.708,
+      "total_nodes": 3,
+      "flooded_nodes": 0,
+      "max_node_depth_m": 0.36,
+      "max_conduit_flow_cms": 0.306,
+      "max_conduit_velocity_ms": 1.47,
+      "per_node": {
+        "J1": {
+          "max_depth_m": 0.36,
+          "avg_depth_m": 0.07,
+          "max_hgl_m": 10.36,
+          "flooded": false
+        },
+        "J2": {
+          "max_depth_m": 0.29,
+          "avg_depth_m": 0.06,
+          "max_hgl_m": 8.79,
+          "flooded": false
+        },
+        "OUT1": {
+          "max_depth_m": 0.29,
+          "avg_depth_m": 0.05,
+          "max_hgl_m": 7.29,
+          "flooded": false
+        }
+      }
+    },
+    "severe_blockage": {
+      "status": "success",
+      "rpt_file": "/Users/darsh/Projects/chennai-flood-nowcasting/swmm_engine/outputs/direct_injected_severe_blockage.rpt",
+      "total_precip_mm": 384.708,
+      "total_nodes": 3,
+      "flooded_nodes": 0,
+      "max_node_depth_m": 0.47,
+      "max_conduit_flow_cms": 0.306,
+      "max_conduit_velocity_ms": 1.15,
+      "per_node": {
+        "J1": {
+          "max_depth_m": 0.47,
+          "avg_depth_m": 0.09,
+          "max_hgl_m": 10.47,
+          "flooded": false
+        },
+        "J2": {
+          "max_depth_m": 0.39,
+          "avg_depth_m": 0.08,
+          "max_hgl_m": 8.89,
+          "flooded": false
+        },
+        "OUT1": {
+          "max_depth_m": 0.29,
+          "avg_depth_m": 0.05,
+          "max_hgl_m": 7.29,
+          "flooded": false
+        }
+      }
+    }
+  },
+  "scenario_comparison": {
+    "max_depth_normal_m": 0.28,
+    "max_depth_reduced_capacity_m": 0.36,
+    "max_depth_severe_blockage_m": 0.47,
+    "depth_increase_normal_to_reduced_m": 0.08,
+    "depth_increase_normal_to_severe_m": 0.19,
+    "pct_increase_normal_to_severe": 67.9,
+    "hydraulic_note": "Scenario changes apply Manning roughness multipliers to conduit C1 and C2. Higher roughness reduces flow capacity, raises upstream head (node depth), while the same runoff volume enters from subcatchment S1. Under the 2015 IMERG event, no nodes reach overflow at pilot scale."
+  },
+  "limitations": [
+    "Model is a synthetic pilot network; NOT the real Chennai drainage system.",
+    "Real drainage GeoPackage (10,255 features) is NOT hydraulically connected to this model.",
+    "Node depths are maximum over the full simulation period.",
+    "No nodes were surcharged or flooded (overflow) under IMERG 2015 event at pilot scale.",
+    "Scenario differences are due to Manning roughness multipliers only; geometry unchanged."
+  ]
+}

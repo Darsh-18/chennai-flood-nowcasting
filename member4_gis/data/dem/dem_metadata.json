@@ -1,0 +1,6 @@
+{
+  "status": "MISSING",
+  "expected_path": "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/DEM/chennai_dem_glo30.tif",
+  "error": "DEM file not found at expected location",
+  "action_required": "Place chennai_dem_glo30.tif at Datasets/DEM/"
+}
