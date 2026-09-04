@@ -6,3 +6,16 @@ frontend/dist/
 __pycache__/
 *.pyc
 .env
+
+# Python virtual environment
+.venv/
+
+# Large/raw datasets
+data/raw/
+
+# Generated routing graphs
+data/processed/roads/*.pkl
+data/processed/roads/*.graphml
+
+# OS files
+.DS_Store
