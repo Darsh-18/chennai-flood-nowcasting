@@ -1,10 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigation2, RefreshCw } from "lucide-react";
 import { fetchRoute } from "../api/client";
 import { useFloodStore } from "../state/FloodStore";
 import type { CriticalInfraProperties, ForecastMinutes, GeoJsonFeature } from "../types/api";
 import RouteExplanationCard from "./RouteExplanationCard";
-import CriticalInfraPopup from "./CriticalInfraPopup";
+
+function InfraChip({ item }: { item?: GeoJsonFeature<CriticalInfraProperties> }) {
+  if (!item) return <div className="h-12 rounded-xl bg-ink-700/50 flex items-center justify-center text-[10px] text-ink-500">No selection</div>;
+  const TYPE_COLOR: Record<string, string> = {
+    Hospital: "#f472b6",
+    "Relief Center": "#34d399",
+    "Fire Station": "#fb923c",
+  };
+  const color = TYPE_COLOR[item.properties.type] ?? "#8b98b8";
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2">
+      <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+      <div className="min-w-0">
+        <p className="text-[11px] font-semibold text-ink-200 truncate">{item.properties.name}</p>
+        <p className="text-[9px] text-ink-500">{item.properties.type}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function RoutingPanel() {
   const { criticalInfrastructure, scenario, selectedForecastMinute, route, setRoute, layers, toggleLayer } = useFloodStore();
@@ -16,15 +33,12 @@ export default function RoutingPanel() {
 
   useEffect(() => {
     if (!features.length || start || end) return;
-    setStart(features.find((feature) => feature.properties.type === "Hospital")?.properties.infra_id ?? features[0].properties.infra_id);
-    setEnd(
-      features.find((feature) => feature.properties.type === "Relief Center")?.properties.infra_id ??
-        features[features.length - 1].properties.infra_id,
-    );
+    setStart(features.find((f) => f.properties.type === "Hospital")?.properties.infra_id ?? features[0].properties.infra_id);
+    setEnd(features.find((f) => f.properties.type === "Relief Center")?.properties.infra_id ?? features[features.length - 1].properties.infra_id);
   }, [end, features, start]);
 
-  const startItem = useMemo(() => features.find((feature) => feature.properties.infra_id === start), [features, start]);
-  const endItem = useMemo(() => features.find((feature) => feature.properties.infra_id === end), [end, features]);
+  const startItem = useMemo(() => features.find((f) => f.properties.infra_id === start), [features, start]);
+  const endItem   = useMemo(() => features.find((f) => f.properties.infra_id === end), [end, features]);
 
   async function calculate() {
     if (!start || !end) return;
@@ -34,11 +48,7 @@ export default function RoutingPanel() {
       const forecast_minutes = [30, 60, 120, 180].includes(selectedForecastMinute)
         ? (selectedForecastMinute as ForecastMinutes)
         : scenario.forecast_minutes;
-      const nextRoute = await fetchRoute({
-        start_infra_id: start,
-        end_infra_id: end,
-        scenario: { ...scenario, forecast_minutes },
-      });
+      const nextRoute = await fetchRoute({ start_infra_id: start, end_infra_id: end, scenario: { ...scenario, forecast_minutes } });
       setRoute(nextRoute);
       if (!layers.route) toggleLayer("route");
     } catch (err) {
@@ -48,59 +58,65 @@ export default function RoutingPanel() {
     }
   }
 
+  const selectCls = "w-full rounded-xl border border-white/8 bg-ink-800 px-3 py-2 text-xs font-medium text-ink-200 outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/30 transition";
+
   return (
-    <section className="border border-ops-line bg-ops-paper p-4">
-      <div className="mb-3 flex items-center gap-2">
-        <Navigation2 className="h-4 w-4 text-ops-accent" />
-        <h2 className="text-sm font-bold">Emergency Routing</h2>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <label className="text-xs font-bold uppercase text-ops-muted">
-          Start
-          <select
-            value={start}
-            onChange={(event) => setStart(event.target.value)}
-            className="mt-2 w-full border border-ops-line bg-white px-3 py-2 text-sm font-semibold text-ops-ink"
-          >
-            {features.map((feature) => (
-              <option key={feature.properties.infra_id} value={feature.properties.infra_id}>
-                {feature.properties.name}
-              </option>
+    <div className="space-y-3">
+      <p className="font-mono text-[10px] uppercase tracking-wider text-ink-400">Emergency Routing</p>
+
+      {/* Selects */}
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="block mb-1 font-mono text-[9px] uppercase tracking-wider text-ink-500">From</label>
+          <select value={start} onChange={(e) => setStart(e.target.value)} className={selectCls}>
+            {features.map((f) => (
+              <option key={f.properties.infra_id} value={f.properties.infra_id}>{f.properties.name}</option>
             ))}
           </select>
-        </label>
-        <label className="text-xs font-bold uppercase text-ops-muted">
-          Destination
-          <select
-            value={end}
-            onChange={(event) => setEnd(event.target.value)}
-            className="mt-2 w-full border border-ops-line bg-white px-3 py-2 text-sm font-semibold text-ops-ink"
-          >
-            {features.map((feature) => (
-              <option key={feature.properties.infra_id} value={feature.properties.infra_id}>
-                {feature.properties.name}
-              </option>
+        </div>
+        <div>
+          <label className="block mb-1 font-mono text-[9px] uppercase tracking-wider text-ink-500">To</label>
+          <select value={end} onChange={(e) => setEnd(e.target.value)} className={selectCls}>
+            {features.map((f) => (
+              <option key={f.properties.infra_id} value={f.properties.infra_id}>{f.properties.name}</option>
             ))}
           </select>
-        </label>
+        </div>
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-3">
-        <CriticalInfraPopup item={startItem} />
-        <CriticalInfraPopup item={endItem} />
+
+      {/* Selection chips */}
+      <div className="grid grid-cols-2 gap-2">
+        <InfraChip item={startItem} />
+        <InfraChip item={endItem} />
       </div>
-      {message ? <div className="mt-3 border border-ops-orange bg-white/70 p-2 text-xs text-ops-orange">{message}</div> : null}
+
+      {/* Error */}
+      {message && (
+        <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-xs text-red-400">{message}</div>
+      )}
+
+      {/* Calculate button */}
       <button
         type="button"
         onClick={() => void calculate()}
         disabled={loading || !start || !end || start === end}
-        className="mt-3 flex w-full items-center justify-center gap-2 border border-ops-accentDark bg-ops-accentDark px-4 py-3 text-sm font-bold text-white hover:bg-ops-accent disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-4 py-2.5 font-display text-sm font-bold text-accent transition hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-        CALCULATE SAFE ROUTE
+        {loading ? (
+          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+            <path d="M12 4v4M12 16v4M4 12H8M16 12h4" strokeLinecap="round" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+        {loading ? "Calculating…" : "Calculate Safe Route"}
       </button>
-      <div className="mt-3">
-        <RouteExplanationCard route={route} />
-      </div>
-    </section>
+
+      {/* Route result */}
+      {route && <RouteExplanationCard route={route} />}
+    </div>
   );
 }

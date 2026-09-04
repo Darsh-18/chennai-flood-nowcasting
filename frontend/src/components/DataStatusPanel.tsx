@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { DatabaseZap, RefreshCw } from "lucide-react";
 import { fetchDataStatus } from "../api/client";
 import type { DataLayerStatus } from "../types/api";
+import { ClassificationBadge } from "./ui/Badge";
 
-const CLASS_STYLES = {
-  OBSERVED: "border-ops-green text-ops-green",
-  DERIVED: "border-ops-accent text-ops-accentDark",
-  INFERRED: "border-ops-orange text-ops-orange",
-  SIMULATED: "border-ops-red text-ops-red",
+const STATUS_COLOR: Record<string, string> = {
+  ready:     "text-emerald-400",
+  degraded:  "text-amber-400",
+  error:     "text-red-400",
+  loading:   "text-ink-400",
+  simulated: "text-amber-400",
 };
 
 export default function DataStatusPanel() {
@@ -28,54 +29,65 @@ export default function DataStatusPanel() {
     }
   }
 
-  useEffect(() => {
-    void refresh();
-  }, []);
+  useEffect(() => { void refresh(); }, []);
 
   return (
-    <section className="border border-ops-line bg-ops-paper p-4">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <DatabaseZap className="h-4 w-4 text-ops-accent" />
-          <h2 className="text-sm font-bold">Data Status</h2>
-        </div>
+    <div className="space-y-3">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <span className="font-display text-xs font-semibold uppercase tracking-wider text-ink-300">Data Sources</span>
         <button
           type="button"
           onClick={() => void refresh()}
-          className="flex items-center gap-2 border border-ops-line bg-white px-3 py-2 text-xs font-bold hover:border-ops-accent"
+          className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold text-ink-400 hover:bg-white/8 hover:text-ink-200 transition-colors"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <svg
+            className={`h-3 w-3 ${loading ? "animate-spin" : ""}`}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden
+          >
+            <path d="M23 4v6h-6M1 20v-6h6" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           Refresh
         </button>
       </div>
-      {message ? <div className="mb-3 border border-ops-orange bg-white/70 p-2 text-xs text-ops-orange">{message}</div> : null}
-      <div className="overflow-hidden border border-ops-line">
-        <table className="w-full border-collapse bg-white/70 text-sm">
-          <thead className="bg-ops-field text-left text-xs uppercase text-ops-muted">
-            <tr>
-              <th className="px-3 py-2">Layer</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Classification</th>
-            </tr>
-          </thead>
-          <tbody>
-            {layers.map((layer) => (
-              <tr key={layer.name} className="border-t border-ops-line align-top">
-                <td className="px-3 py-3">
-                  <div className="font-bold">{layer.name}</div>
-                  <div className="mt-1 text-xs leading-4 text-ops-muted">{layer.detail}</div>
-                </td>
-                <td className="px-3 py-3 font-semibold">{layer.status}</td>
-                <td className="px-3 py-3">
-                  <span className={`inline-block border px-2 py-1 text-xs font-bold ${CLASS_STYLES[layer.classification]}`}>
-                    {layer.classification}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      {/* Error */}
+      {message && (
+        <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-xs text-red-400">{message}</div>
+      )}
+
+      {/* Skeleton */}
+      {loading && !layers.length && (
+        <div className="space-y-2">
+          {[0, 1, 2, 3].map((i) => <div key={i} className="veg-skeleton h-12 rounded-xl" />)}
+        </div>
+      )}
+
+      {/* Layer rows */}
+      <div className="space-y-1.5">
+        {layers.map((layer) => (
+          <div key={layer.name} className="rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2.5">
+            <div className="flex items-start justify-between gap-2 mb-1">
+              <span className="text-xs font-semibold text-ink-200">{layer.name}</span>
+              <ClassificationBadge label={layer.classification} />
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] text-ink-400 leading-relaxed flex-1">{layer.detail}</span>
+              <span className={`font-mono text-[9px] font-semibold uppercase ${STATUS_COLOR[layer.status?.toLowerCase()] ?? "text-ink-400"}`}>
+                {layer.status}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
-    </section>
+
+      {/* SIMULATED footer */}
+      <div className="rounded-xl border border-amber-500/15 bg-amber-500/5 px-3 py-2">
+        <p className="font-mono text-[9px] text-amber-400/80 leading-relaxed">
+          ⚠ Layers marked SIMULATED use demonstration data. Not for operational use.
+        </p>
+      </div>
+    </div>
   );
 }

@@ -1,122 +1,168 @@
-import { Clock, CloudRain, RefreshCw, Workflow } from "lucide-react";
+import { useState } from "react";
 import { useFloodStore } from "../state/FloodStore";
 import type { DrainageCondition, ForecastMinutes, RainfallIntensity } from "../types/api";
 
-const RAIN_LABELS: Record<RainfallIntensity, string> = {
-  moderate: "Moderate",
-  heavy: "Heavy",
-  extreme: "Extreme",
-};
-
-const DRAINAGE_LABELS: Record<DrainageCondition, string> = {
-  normal: "Normal",
-  degraded: "Degraded",
-  severe: "Severe",
-};
-
-function buttonClass(active: boolean) {
-  return `border px-3 py-2 text-sm font-semibold transition ${
-    active
-      ? "border-ops-accent bg-ops-accent text-white"
-      : "border-ops-line bg-white/70 text-ops-ink hover:border-ops-accent"
-  }`;
-}
-
 export default function ScenarioControls() {
   const { scenario, setScenario, options, runNowcast, loading, error, clearError } = useFloodStore();
+  const [collapsed, setCollapsed] = useState(false);
+
   const rainOptions = options?.rainfall_intensity ?? (["moderate", "heavy", "extreme"] as RainfallIntensity[]);
   const drainageOptions = options?.drainage_condition ?? (["normal", "degraded", "severe"] as DrainageCondition[]);
   const horizonOptions = options?.forecast_minutes ?? ([30, 60, 120, 180] as ForecastMinutes[]);
 
+  if (collapsed) {
+    return (
+      <div className="w-[260px] rounded-2xl border border-white/10 bg-[#0d1527]/90 backdrop-blur-xl p-3 shadow-2xl flex items-center justify-between">
+        <span className="font-display text-[11px] font-bold uppercase tracking-wider text-ink-300">
+          SCENARIO CONTROLS
+        </span>
+        <button
+          onClick={() => setCollapsed(false)}
+          className="rounded-lg p-1 text-ink-400 hover:bg-white/10 hover:text-white transition-colors"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <section className="border border-ops-line bg-ops-paper p-4">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-bold">Scenario</h2>
-        <span className="text-xs font-semibold text-ops-muted">Reduced-order demonstration model</span>
+    <div className="w-[260px] shrink-0 rounded-2xl border border-white/10 bg-[#0d1527]/90 backdrop-blur-xl shadow-2xl overflow-hidden transition-all">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/8">
+        <span className="font-display text-[11px] font-bold uppercase tracking-wider text-ink-300">
+          SCENARIO CONTROLS
+        </span>
+        <button
+          onClick={() => setCollapsed(true)}
+          className="rounded-lg p-1 text-ink-400 hover:bg-white/10 hover:text-white transition-colors"
+          aria-label="Collapse scenario controls"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M18 15l-6-6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="p-3 space-y-3">
+        {/* Rainfall */}
         <div>
-          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase text-ops-muted">
-            <CloudRain className="h-4 w-4" />
-            Rainfall
+          <div className="mb-1 text-[10px] font-mono uppercase tracking-wider text-ink-400">
+            RAINFALL
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            {rainOptions.map((item) => (
-              <button
-                key={item}
-                type="button"
-                title={`Set rainfall to ${RAIN_LABELS[item]}`}
-                onClick={() => {
-                  clearError();
-                  setScenario((current) => ({ ...current, rainfall_intensity: item }));
-                }}
-                className={buttonClass(scenario.rainfall_intensity === item)}
-              >
-                {RAIN_LABELS[item]}
-              </button>
-            ))}
+          <div className="grid grid-cols-3 gap-1">
+            {rainOptions.map((item) => {
+              const active = scenario.rainfall_intensity === item;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => {
+                    clearError();
+                    setScenario((c) => ({ ...c, rainfall_intensity: item }));
+                  }}
+                  className={`rounded-lg py-1.5 text-xs font-semibold capitalize transition-all ${active
+                    ? item === "extreme"
+                      ? "bg-red-500 text-white shadow-lg shadow-red-500/30"
+                      : "bg-cyan-500 text-ink-950 font-bold shadow-lg shadow-cyan-500/20"
+                    : "bg-white/[0.04] text-ink-300 hover:bg-white/10 hover:text-white"
+                    }`}
+                >
+                  {item}
+                </button>
+              );
+            })}
           </div>
         </div>
 
+        {/* Drainage */}
         <div>
-          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase text-ops-muted">
-            <Workflow className="h-4 w-4" />
-            Drainage
+          <div className="mb-1 text-[10px] font-mono uppercase tracking-wider text-ink-400">
+            DRAINAGE
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            {drainageOptions.map((item) => (
-              <button
-                key={item}
-                type="button"
-                title={`Set drainage to ${DRAINAGE_LABELS[item]}`}
-                onClick={() => {
-                  clearError();
-                  setScenario((current) => ({ ...current, drainage_condition: item }));
-                }}
-                className={buttonClass(scenario.drainage_condition === item)}
-              >
-                {DRAINAGE_LABELS[item]}
-              </button>
-            ))}
+          <div className="grid grid-cols-3 gap-1">
+            {drainageOptions.map((item) => {
+              const active = scenario.drainage_condition === item;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => {
+                    clearError();
+                    setScenario((c) => ({ ...c, drainage_condition: item }));
+                  }}
+                  className={`rounded-lg py-1.5 text-xs font-semibold capitalize transition-all ${active
+                    ? item === "degraded"
+                      ? "bg-amber-500/20 text-amber-300 ring-1 ring-amber-500 shadow-md shadow-amber-500/20"
+                      : item === "severe"
+                        ? "bg-red-500/20 text-red-300 ring-1 ring-red-500 shadow-md shadow-red-500/20"
+                        : "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500 shadow-md shadow-emerald-500/20"
+                    : "bg-white/[0.04] text-ink-300 hover:bg-white/10 hover:text-white"
+                    }`}
+                >
+                  {item}
+                </button>
+              );
+            })}
           </div>
         </div>
 
+        {/* Horizon */}
         <div>
-          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase text-ops-muted">
-            <Clock className="h-4 w-4" />
-            Horizon
+          <div className="mb-1 text-[10px] font-mono uppercase tracking-wider text-ink-400">
+            HORIZON
           </div>
-          <div className="grid grid-cols-4 gap-2">
-            {horizonOptions.map((item) => (
-              <button
-                key={item}
-                type="button"
-                title={`Set horizon to T+${item}`}
-                onClick={() => {
-                  clearError();
-                  setScenario((current) => ({ ...current, forecast_minutes: item }));
-                }}
-                className={buttonClass(scenario.forecast_minutes === item)}
-              >
-                T+{item}
-              </button>
-            ))}
+          <div className="grid grid-cols-4 gap-1">
+            {horizonOptions.map((item) => {
+              const active = scenario.forecast_minutes === item;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => {
+                    clearError();
+                    setScenario((c) => ({ ...c, forecast_minutes: item }));
+                  }}
+                  className={`rounded-lg py-1 text-xs font-semibold transition-all ${active
+                    ? "bg-cyan-500 text-ink-950 font-bold shadow-md shadow-cyan-500/30"
+                    : "bg-white/[0.04] text-ink-300 hover:bg-white/10 hover:text-white"
+                    }`}
+                >
+                  T+{item}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {error ? <div className="border border-ops-orange bg-white/70 p-2 text-xs text-ops-orange">{error}</div> : null}
+        {/* Error notice */}
+        {error && (
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-2.5 py-1.5 text-[11px] text-red-400">
+            {error}
+          </div>
+        )}
 
+        {/* Run Nowcast Primary Button */}
         <button
           type="button"
           onClick={() => void runNowcast()}
           disabled={loading}
-          className="flex w-full items-center justify-center gap-2 border border-ops-accentDark bg-ops-accentDark px-4 py-3 text-sm font-bold text-white transition hover:bg-ops-accent disabled:cursor-wait disabled:opacity-70"
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 px-4 py-2.5 font-display text-xs font-extrabold uppercase tracking-wider text-ink-950 shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-60 cursor-pointer"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          RUN NOWCAST
+          {loading ? (
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 4v4M12 16v4M4 12H8M16 12h4M6.34 6.34l2.83 2.83M14.83 14.83l2.83 2.83M17.66 6.34l-2.83 2.83M9.17 14.83l-2.83 2.83" strokeLinecap="round" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          )}
+          {loading ? "COMPUTING…" : "RUN NOWCAST"}
         </button>
       </div>
-    </section>
+    </div>
   );
 }

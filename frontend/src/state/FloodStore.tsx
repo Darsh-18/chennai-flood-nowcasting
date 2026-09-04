@@ -37,7 +37,17 @@ export interface LayerState {
   roads: boolean;
   critical: boolean;
   route: boolean;
+  radar: boolean;
+  relief: boolean;
 }
+
+export interface LastLayerEvent {
+  layer: keyof LayerState;
+  on: boolean;
+  at: number;
+}
+
+export type StartupPhase = "globe" | "transitioning" | "chennai" | "ready";
 
 interface FloodStoreValue {
   scenario: Scenario;
@@ -52,17 +62,35 @@ interface FloodStoreValue {
   runNowcast: (nextScenario?: Scenario) => Promise<void>;
   layers: LayerState;
   toggleLayer: (layer: keyof LayerState) => void;
+  lastLayerEvent?: LastLayerEvent;
   drainage?: FeatureCollection;
   mapContext?: FeatureCollection;
   pilotBoundary?: FeatureCollection;
   criticalInfrastructure?: FeatureCollection;
   clickedCell?: FloodCell;
   setClickedCell: (cell?: FloodCell) => void;
+  clickedRoad?: any;
+  setClickedRoad: (road?: any) => void;
   route?: RouteResponse;
   setRoute: (route?: RouteResponse) => void;
   loading: boolean;
   error?: string;
   clearError: () => void;
+  // ── UI state ──
+  startupPhase: StartupPhase;
+  setStartupPhase: (phase: StartupPhase) => void;
+  basemap: "dark" | "satellite";
+  setBasemap: (b: "dark" | "satellite") => void;
+  locateTrigger: number;
+  triggerLocate: () => void;
+  infoOpen: boolean;
+  setInfoOpen: (open: boolean) => void;
+  layerPanelOpen: boolean;
+  setLayerPanelOpen: (open: boolean) => void;
+  layerCollapsed: boolean;
+  setLayerCollapsed: (v: boolean) => void;
+  timelinePlaying: boolean;
+  setTimelinePlaying: (p: boolean) => void;
 }
 
 const DEFAULT_SCENARIO: Scenario = {
@@ -77,6 +105,8 @@ const DEFAULT_LAYERS: LayerState = {
   roads: true,
   critical: true,
   route: true,
+  radar: false,
+  relief: true,
 };
 
 const FloodStore = createContext<FloodStoreValue | undefined>(undefined);
@@ -100,14 +130,33 @@ export function FloodStoreProvider({ children }: { children: ReactNode }) {
   const [forecast, setForecast] = useState<ForecastResponse>();
   const [selectedForecastMinute, setSelectedForecastMinuteState] = useState<number>(DEFAULT_SCENARIO.forecast_minutes);
   const [layers, setLayers] = useState<LayerState>(DEFAULT_LAYERS);
+  const [lastLayerEvent, setLastLayerEvent] = useState<LastLayerEvent>();
   const [drainage, setDrainage] = useState<FeatureCollection>();
   const [mapContext, setMapContext] = useState<FeatureCollection>();
   const [pilotBoundary, setPilotBoundary] = useState<FeatureCollection>();
   const [criticalInfrastructure, setCriticalInfrastructure] = useState<FeatureCollection>();
   const [clickedCell, setClickedCell] = useState<FloodCell>();
+  const [clickedRoad, setClickedRoad] = useState<any>();
   const [route, setRoute] = useState<RouteResponse>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
+  // ── UI state ──
+  const [startupPhase, setStartupPhase] = useState<StartupPhase>(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return "ready";
+    }
+    return "globe";
+  });
+  const [basemap, setBasemap] = useState<"dark" | "satellite">("dark");
+  const [locateTrigger, setLocateTrigger] = useState(0);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [layerPanelOpen, setLayerPanelOpen] = useState(true);
+  const [layerCollapsed, setLayerCollapsed] = useState(false);
+  const [timelinePlaying, setTimelinePlaying] = useState(false);
+
+  const triggerLocate = useCallback(() => {
+    setLocateTrigger((prev) => prev + 1);
+  }, []);
 
   const activeStep = useMemo(() => {
     if (!forecast) return undefined;
@@ -193,7 +242,11 @@ export function FloodStoreProvider({ children }: { children: ReactNode }) {
   }, [activeStep, clickedCell?.cell_id]);
 
   const toggleLayer = useCallback((layer: keyof LayerState) => {
-    setLayers((current) => ({ ...current, [layer]: !current[layer] }));
+    setLayers((current) => {
+      const on = !current[layer];
+      setLastLayerEvent({ layer, on, at: Date.now() });
+      return { ...current, [layer]: on };
+    });
   }, []);
 
   const value = useMemo<FloodStoreValue>(
@@ -216,22 +269,43 @@ export function FloodStoreProvider({ children }: { children: ReactNode }) {
       criticalInfrastructure,
       clickedCell,
       setClickedCell,
+      clickedRoad,
+      setClickedRoad,
       route,
       setRoute,
       loading,
       error,
       clearError: () => setError(undefined),
+      // ── UI state ──
+      startupPhase,
+      setStartupPhase,
+      basemap,
+      setBasemap,
+      locateTrigger,
+      triggerLocate,
+      infoOpen,
+      setInfoOpen,
+      layerPanelOpen,
+      setLayerPanelOpen,
+      layerCollapsed,
+      setLayerCollapsed,
+      timelinePlaying,
+      setTimelinePlaying,
+      lastLayerEvent,
     }),
     [
-      activeStep,
+      basemap,
       clickedCell,
+      clickedRoad,
       criticalInfrastructure,
       drainage,
       error,
       forecast,
       health,
       layers,
+      lastLayerEvent,
       loading,
+      locateTrigger,
       mapContext,
       nowcast,
       options,
@@ -241,7 +315,13 @@ export function FloodStoreProvider({ children }: { children: ReactNode }) {
       scenario,
       selectedForecastMinute,
       setSelectedForecastMinute,
+      startupPhase,
       toggleLayer,
+      triggerLocate,
+      infoOpen,
+      layerPanelOpen,
+      layerCollapsed,
+      timelinePlaying,
     ],
   );
 

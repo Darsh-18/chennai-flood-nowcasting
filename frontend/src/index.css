@@ -2,7 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* ══════════════════════════════════════════════════════════════════
+   Layout Variables — Header clearance, side rails, map controls
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --header-height: 56px;
+  --header-top: 12px;
+  --panel-top-gap: 16px;
+  --panel-top: calc(var(--header-top) + var(--header-height) + var(--panel-top-gap));
+  --panel-bottom-gap: 16px;
+  --panel-bottom-offset: 136px;
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --panel-top-gap: 12px;
+    --panel-top: calc(var(--header-top) + var(--header-height) + var(--panel-top-gap));
+    --panel-bottom-gap: 12px;
+  }
+}
+
+.layout-left-rail {
+  top: var(--panel-top);
+  height: calc(100vh - var(--panel-top) - var(--panel-bottom-gap));
+  max-height: calc(100vh - var(--panel-top) - var(--panel-bottom-gap));
+}
+
+.layout-map-controls {
+  top: var(--panel-top);
+}
+
+.layout-right-rail {
+  top: var(--panel-top);
+  bottom: var(--panel-bottom-offset);
+}
+
+/* Subtle, sleek dark-glass scrollbar for left sidebar */
+.custom-sidebar-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 6px 0;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.55);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Base reset
+   ══════════════════════════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -11,15 +79,16 @@ body,
 #root {
   height: 100%;
   margin: 0;
+  overscroll-behavior: none;
 }
 
 body {
-  background: #dce2d7;
-  color: #1f2a27;
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  background: #0a0e1a;
+  color: #cbd5e8;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
@@ -27,31 +96,296 @@ select {
   font: inherit;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   MapLibre — glass / dark skin
+   ══════════════════════════════════════════════════════════════════ */
+.maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-group {
+  background: rgba(10, 14, 26, 0.88) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+.maplibregl-map .maplibregl-ctrl-group button,
+.maplibregl-map .maplibregl-ctrl-group button:not(:disabled) {
+  background: transparent !important;
+  border: none !important;
+  color: #aab6d4 !important;
+}
+.maplibregl-map .maplibregl-ctrl-group button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+}
+.maplibregl-map .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(0.85) brightness(1.4);
+}
+.maplibregl-map .maplibregl-ctrl-scale {
+  background: rgba(10, 14, 26, 0.6) !important;
+  border-color: rgba(139, 152, 184, 0.4) !important;
+  color: #8b98b8 !important;
+  font-size: 10px !important;
+}
+.maplibregl-ctrl-attrib {
+  display: none !important;
+}
+.maplibregl-ctrl-top-left,
+.maplibregl-ctrl-top-right {
+  top: var(--panel-top) !important;
+}
+.maplibregl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-left {
+  display: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MapLibre popups — glass design
+   ══════════════════════════════════════════════════════════════════ */
+.veg-popup .maplibregl-popup-content {
+  background: rgba(17, 24, 39, 0.92);
+  color: #cbd5e8;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  min-width: 200px;
+}
+.veg-popup .maplibregl-popup-close-button {
+  color: #8b98b8;
+  font-size: 18px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.veg-popup .maplibregl-popup-close-button:hover {
+  color: #fff;
+}
+.veg-popup .maplibregl-popup-tip {
+  border-top-color: rgba(17, 24, 39, 0.92) !important;
+  border-bottom-color: rgba(17, 24, 39, 0.92) !important;
+}
+.veg-popup__body {
+  border-left: 3px solid var(--veg-accent, #38bdf8);
+  padding: 12px 16px;
+}
+.veg-popup__title {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.veg-popup__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.veg-popup__label {
+  color: #8b98b8;
+  font-size: 11px;
+}
+.veg-popup__value {
+  color: #cbd5e8;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.veg-popup__status {
+  font-weight: 600;
+  color: var(--veg-accent, #38bdf8);
+}
+
+/* Legacy map-popup (keep for backward compat during transition) */
 .maplibregl-popup-content {
-  border-radius: 8px;
-  border: 1px solid #c8d0c8;
-  box-shadow: 0 18px 48px rgba(31, 42, 39, 0.18);
-  color: #1f2a27;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  color: #cbd5e8;
+  background: rgba(17, 24, 39, 0.92);
   padding: 0;
 }
-
 .map-popup {
-  min-width: 220px;
-  padding: 12px;
+  min-width: 200px;
+  padding: 12px 16px;
+  border-left: 3px solid #38bdf8;
 }
-
 .map-popup h3 {
   margin: 0 0 8px;
   font-size: 13px;
   font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #f1f5f9;
 }
-
 .map-popup p {
-  margin: 4px 0;
-  font-size: 12px;
+  margin: 3px 0;
+  font-size: 11px;
+  color: #aab6d4;
+}
+.map-popup strong {
+  color: #cbd5e8;
 }
 
-.maplibregl-ctrl-bottom-right,
-.maplibregl-ctrl-bottom-left {
-  display: none;
+/* ══════════════════════════════════════════════════════════════════
+   Custom range slider
+   ══════════════════════════════════════════════════════════════════ */
+.veg-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #0ea5e9, #38bdf8);
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+.veg-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f8fafc;
+  border: 2px solid #0ea5e9;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  cursor: pointer;
+}
+.veg-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f8fafc;
+  border: 2px solid #0ea5e9;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  cursor: pointer;
+}
+.veg-range:focus-visible {
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.4);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Scrollbars — glass panels
+   ══════════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 152, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 152, 184, 0.45);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Layer icon micro-animations (active layers only)
+   ══════════════════════════════════════════════════════════════════ */
+@keyframes vegDrop {
+  0%   { transform: translateY(-2px); opacity: 0; }
+  35%  { opacity: 1; }
+  100% { transform: translateY(3px);  opacity: 0; }
+}
+.veg-drop { animation: vegDrop 1.3s ease-in infinite; }
+
+@keyframes vegWave {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(2.5px); }
+}
+.veg-wave { animation: vegWave 2.4s ease-in-out infinite; }
+
+@keyframes vegTrace {
+  0%      { stroke-dashoffset: 100; opacity: 0.6; }
+  45%, 80%{ stroke-dashoffset: 0;   opacity: 1;   }
+  95%     { stroke-dashoffset: 0;   opacity: 0.6; }
+  100%    { stroke-dashoffset: 100; opacity: 0.6; }
+}
+.veg-trace { animation: vegTrace 2.8s ease-out infinite; }
+
+@keyframes vegBlink {
+  0%, 78%, 100% { opacity: 1;    }
+  86%           { opacity: 0.35; }
+}
+.veg-blink { animation: vegBlink 2.2s ease-in-out infinite; }
+
+@keyframes vegPulseCore {
+  0%, 100% { opacity: 1;    }
+  50%      { opacity: 0.45; }
+}
+.veg-pulse-core { animation: vegPulseCore 2s ease-in-out infinite; }
+
+.veg-delay-1 { animation-delay: 0.35s; }
+.veg-delay-2 { animation-delay: 0.70s; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Skeleton shimmer (loading states)
+   ══════════════════════════════════════════════════════════════════ */
+@keyframes vegShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.veg-skeleton {
+  background: linear-gradient(
+    100deg,
+    rgba(139, 152, 184, 0.07) 30%,
+    rgba(139, 152, 184, 0.18) 50%,
+    rgba(139, 152, 184, 0.07) 70%
+  );
+  background-size: 200% 100%;
+  animation: vegShimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Attention pulse (timeline play button hint — fires 2×, not looping)
+   ══════════════════════════════════════════════════════════════════ */
+@keyframes vegAttention {
+  0%, 100% { box-shadow: 0 0 0  0 rgba(56, 189, 248, 0);    }
+  30%      { box-shadow: 0 0 0  6px rgba(56, 189, 248, 0.35); }
+  60%      { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0);    }
+}
+.veg-attention { animation: vegAttention 1.6s ease-out 2; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Row flash on map-marker click
+   ══════════════════════════════════════════════════════════════════ */
+@keyframes vegRowFlash {
+  0%, 100% { background-color: rgba(56, 189, 248, 0);    }
+  25%      { background-color: rgba(56, 189, 248, 0.22); }
+}
+.veg-row-flash { animation: vegRowFlash 1.6s ease-out; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Glass panel utility class (reused in many components)
+   ══════════════════════════════════════════════════════════════════ */
+.glass-panel {
+  background: rgba(10, 14, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Reduced-motion safety
+   ══════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
