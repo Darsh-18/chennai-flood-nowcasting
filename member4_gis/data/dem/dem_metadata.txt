@@ -1,0 +1,32 @@
+CHENNAI DEM METADATA REPORT
+============================================================
+
+Source:           /Users/darsh/Projects/chennai-flood-nowcasting/Datasets/DEM/chennai_dem_glo30.tif
+Description:      Copernicus GLO-30 (~30 m resolution DEM)
+
+CRS:              EPSG:4326
+Geographic:       True
+EPSG:             4326
+
+Width  (pixels):  2520
+Height (pixels):  2160
+Bands:            1
+Dtype:            float32
+NoData:           None
+
+Pixel size (X):   0.0002777777777777778 CRS units ≈ 31 m
+Pixel size (Y):   0.0002777777777777778 CRS units ≈ 31 m
+
+Extent (left):    79.79986110000002
+Extent (bottom):  12.700138899999994
+Extent (right):   80.49986110000002
+Extent (top):     13.300138899999993
+
+Valid pixels:     5,443,200
+NoData pixels:   0
+Min elevation:   -65.54777526855469 m
+Max elevation:   313.61767578125 m
+Mean elevation:  23.09 m
+Std elevation:   23.68 m
+
+NOTE: Elevation values assumed in metres (standard for GLO-30).

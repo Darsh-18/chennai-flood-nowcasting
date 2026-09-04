@@ -1,5 +1,5 @@
 {
-  "status": "LIMITED",
+  "status": "COMPLETE",
   "method": "Nearest-neighbour distance between SWMM simulated flood nodes and historical flood observation locations. Match tolerance: 2000 m (2 km) \u2014 chosen to account for the coarse spatial resolution of the pilot model (3 nodes covering a 5 ha catchment near 80.27\u00b0E, 13.08\u00b0N).",
   "limitations": [
     "SWMM model is a synthetic 3-node pilot network, NOT a full Chennai hydraulic model.",
@@ -21,9 +21,24 @@
     "flooded_count": 0
   },
   "historical_data": {
-    "status": "MISSING",
-    "note": "No historical flood GeoPackages found in /Users/darsh/Projects/chennai-flood-nowcasting/member4_gis/data/historical_flood. Historical flood data was not available in the repository."
+    "total_features": 8002,
+    "sources": [
+      "chennai_flood_extent_2015.gpkg",
+      "7cb3cecf-a95a-4786-8032-9c7417655d24.gpkg"
+    ]
   },
-  "distance_metrics": {},
-  "conclusion": "Validation is limited because no historical flood observation data was available in the repository. The SWMM pilot model produces node depth and flow results for 3 synthetic nodes near 80.27\u00b0E, 13.08\u00b0N. A proper spatial validation requires: (1) observed flood extent/points from the 2015 Chennai floods or another event, (2) a spatially distributed SWMM model covering Chennai, (3) aligned simulation timestamps. These components are not yet available in this pilot implementation."
+  "distance_metrics": {
+    "n_historical_points": 500,
+    "n_simulated_nodes": 3,
+    "tolerance_m": 2000.0,
+    "within_tolerance_count": 6,
+    "within_tolerance_pct": 1.2,
+    "mean_distance_m": 22578.2,
+    "min_distance_m": 424.4,
+    "max_distance_m": 89892.3,
+    "median_distance_m": 21523.0,
+    "p75_distance_m": 29250.5,
+    "p95_distance_m": 48357.0
+  },
+  "conclusion": "Validation is LIMITED due to the synthetic pilot network (3 nodes, 5 ha catchment). The 8002 historical flood observations span all of Chennai, while the SWMM model covers a tiny pilot area. Mean nearest distance = 22578.2 m; 1.2% of historical points fall within 2 km of the pilot nodes. This metric is NOT a model skill score \u2014 it reflects the spatial mismatch between a pilot-scale model and a city-wide dataset. A meaningful validation requires a full Chennai SWMM hydraulic model."
 }

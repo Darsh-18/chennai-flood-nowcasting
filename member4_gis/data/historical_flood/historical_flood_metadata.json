@@ -1,11 +1,67 @@
 {
-  "status": "MISSING",
-  "searched_paths": [
-    "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/Historical Flood Events",
-    "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/Histoical Flood Events",
-    "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/historical_flood_events"
+  "status": "PROCESSED",
+  "directory": "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/Histoical Flood Events",
+  "files_found": 2,
+  "files_processed": 2,
+  "files_failed": 0,
+  "processed": [
+    {
+      "source_file": "chennai_flood_extent_2015.gpkg",
+      "output_gpkg": "/Users/darsh/Projects/chennai-flood-nowcasting/member4_gis/data/historical_flood/chennai_flood_extent_2015.gpkg",
+      "features": 4001,
+      "crs": "EPSG:4326",
+      "columns": [
+        "id",
+        "Name",
+        "description",
+        "timestamp",
+        "begin",
+        "end",
+        "altitudeMode",
+        "tessellate",
+        "extrude",
+        "visibility",
+        "drawOrder",
+        "icon",
+        "id2",
+        "area",
+        "perimeter",
+        "pixelvalue",
+        "geometry",
+        "data_source",
+        "source_file"
+      ],
+      "depth_m_added": false
+    },
+    {
+      "source_file": "7cb3cecf-a95a-4786-8032-9c7417655d24.kml",
+      "output_gpkg": "/Users/darsh/Projects/chennai-flood-nowcasting/member4_gis/data/historical_flood/7cb3cecf-a95a-4786-8032-9c7417655d24.gpkg",
+      "features": 4001,
+      "crs": "EPSG:4326",
+      "columns": [
+        "id",
+        "Name",
+        "description",
+        "timestamp",
+        "begin",
+        "end",
+        "altitudeMode",
+        "tessellate",
+        "extrude",
+        "visibility",
+        "drawOrder",
+        "icon",
+        "id2",
+        "area",
+        "perimeter",
+        "pixelvalue",
+        "geometry",
+        "data_source",
+        "source_file"
+      ],
+      "depth_m_added": false
+    }
   ],
-  "error": "No historical flood events directory found",
-  "action_required": "Add historical flood data to Datasets/Historical Flood Events/",
-  "note": "Historical flood data should contain observed flood locations from past events (e.g., 2015 Chennai floods). Acceptable formats: GeoPackage, GeoJSON, Shapefile, KML, CSV with lat/lon."
+  "failed": [],
+  "note": "Historical flood data is treated as observed/reference data. It is NOT SWMM prediction output. It is used for spatial validation of simulated flood locations."
 }

@@ -1,6 +1,35 @@
 {
-  "status": "MISSING",
-  "expected_path": "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/DEM/chennai_dem_glo30.tif",
-  "error": "DEM file not found at expected location",
-  "action_required": "Place chennai_dem_glo30.tif at Datasets/DEM/"
+  "status": "OK",
+  "source": "/Users/darsh/Projects/chennai-flood-nowcasting/Datasets/DEM/chennai_dem_glo30.tif",
+  "source_description": "Copernicus GLO-30 1 arc-second DEM (30 m resolution)",
+  "crs": "EPSG:4326",
+  "crs_is_geographic": true,
+  "epsg": 4326,
+  "width_px": 2520,
+  "height_px": 2160,
+  "band_count": 1,
+  "dtype": "float32",
+  "nodata": null,
+  "pixel_size_crs_units": {
+    "x": 0.0002777777777777778,
+    "y": 0.0002777777777777778
+  },
+  "pixel_size_approx_m": 30.92,
+  "extent": {
+    "left": 79.79986110000002,
+    "bottom": 12.700138899999994,
+    "right": 80.49986110000002,
+    "top": 13.300138899999993,
+    "crs": "EPSG:4326"
+  },
+  "elevation_statistics": {
+    "min_m": -65.54777526855469,
+    "max_m": 313.61767578125,
+    "mean_m": 23.091732025146484,
+    "std_m": 23.67767906188965,
+    "valid_pixels": 5443200,
+    "total_pixels": 5443200,
+    "nodata_pixels": 0
+  },
+  "unit_assumption": "Elevation values assumed to be in metres (standard for GLO-30). Confirm by cross-checking known ground control points in Chennai."
 }
