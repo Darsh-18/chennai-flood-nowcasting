@@ -1,8 +1,81 @@
 import json
 import os
-from typing import Dict, Any
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, Any, Optional
 
 from pyswmm import Simulation, Nodes, Links
+
+
+def _read_inp_spatial_metadata(inp_path: str) -> Dict[str, Any]:
+    """Read only the GIS-relevant records from a SWMM input file.
+
+    SWMM's ``[COORDINATES]`` section has no CRS field.  Its x/y values are
+    therefore returned exactly as model coordinates, but are *not* promoted
+    to latitude/longitude unless a future model explicitly supplies a CRS.
+    """
+    coordinates: Dict[str, Dict[str, float]] = {}
+    conduits: Dict[str, Dict[str, str]] = {}
+    options: Dict[str, str] = {}
+    section = ""
+
+    with open(inp_path, encoding="utf-8") as fh:
+        for raw_line in fh:
+            line = raw_line.split(";", 1)[0].strip()
+            if not line:
+                continue
+            if line.startswith("[") and line.endswith("]"):
+                section = line.upper()
+                continue
+
+            fields = line.split()
+            if section == "[COORDINATES]" and len(fields) >= 3:
+                try:
+                    coordinates[fields[0]] = {
+                        "x": float(fields[1]),
+                        "y": float(fields[2]),
+                    }
+                except ValueError:
+                    # Preserve the simulation result even if a malformed
+                    # optional coordinate record is present.
+                    continue
+            elif section == "[CONDUITS]" and len(fields) >= 3:
+                conduits[fields[0]] = {
+                    "from_node": fields[1],
+                    "to_node": fields[2],
+                }
+            elif section == "[OPTIONS]" and len(fields) >= 2:
+                options[fields[0].upper()] = fields[1]
+
+    def option_datetime(date_key: str, time_key: str) -> Optional[str]:
+        date_value, time_value = options.get(date_key), options.get(time_key)
+        if not date_value or not time_value:
+            return None
+        try:
+            return datetime.strptime(
+                f"{date_value} {time_value}", "%m/%d/%Y %H:%M:%S"
+            ).isoformat()
+        except ValueError:
+            return None
+
+    return {
+        "coordinates": coordinates,
+        "conduits": conduits,
+        "simulation_start": option_datetime("START_DATE", "START_TIME"),
+        "simulation_end": option_datetime("END_DATE", "END_TIME"),
+    }
+
+
+def _rainfall_event_metadata(rainfall_csv_path: Optional[str]) -> Optional[Dict[str, str]]:
+    """Return traceable provenance for externally injected rainfall only."""
+    if rainfall_csv_path is None:
+        return None
+    rainfall_path = Path(rainfall_csv_path)
+    return {
+        "event_id": rainfall_path.stem,
+        # Preserve the caller-provided reference verbatim for traceability.
+        "source_path": rainfall_csv_path,
+    }
 
 
 def prepare_scenario_inp(
@@ -77,6 +150,7 @@ def run_swmm_simulation(
     scenario_name: str = "normal",
     config_path: str = "swmm_engine/config/default_params.json",
     scenario_applied: bool = False,
+    rainfall_csv_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     if not os.path.exists(inp_path):
         return {"status": "failed", "error": f"File not found: {inp_path}"}
@@ -104,6 +178,9 @@ def run_swmm_simulation(
         except (FileNotFoundError, ValueError) as exc:
             return {"status": "failed", "error": "Scenario preparation failure", "details": str(exc)}
         inp_path = prepared_inp_path
+
+    spatial_metadata = _read_inp_spatial_metadata(inp_path)
+    rainfall_event = _rainfall_event_metadata(rainfall_csv_path)
 
     try:
         with Simulation(inp_path) as sim:
@@ -138,9 +215,19 @@ def run_swmm_simulation(
         # Build result lists
         node_results = []
         for nid in node_max_depth:
+            coordinate = spatial_metadata["coordinates"].get(nid)
             node_results.append(
                 {
+                    # ``id`` remains for existing API consumers; the explicit
+                    # name is the GIS integration contract.
                     "id": nid,
+                    "node_id": nid,
+                    "x": coordinate["x"] if coordinate else None,
+                    "y": coordinate["y"] if coordinate else None,
+                    # A SWMM .inp has no CRS declaration. Never infer WGS84
+                    # from values that merely resemble longitude/latitude.
+                    "latitude": None,
+                    "longitude": None,
                     "max_depth_m": round(node_max_depth[nid], 4),
                     "max_flooding_cms": round(node_max_flooding[nid], 6),
                     "flooded": node_max_flooding[nid] > 0.0,
@@ -149,9 +236,13 @@ def run_swmm_simulation(
 
         conduit_results = []
         for lid in conduit_max_flow:
+            conduit_definition = spatial_metadata["conduits"].get(lid, {})
             conduit_results.append(
                 {
                     "id": lid,
+                    "conduit_id": lid,
+                    "from_node": conduit_definition.get("from_node"),
+                    "to_node": conduit_definition.get("to_node"),
                     "max_flow_cms": round(conduit_max_flow[lid], 6),
                 }
             )
@@ -163,9 +254,22 @@ def run_swmm_simulation(
 
         return {
             "status": "success",
+            "scenario": scenario_name,
+            "simulation_start": spatial_metadata["simulation_start"],
+            "simulation_end": spatial_metadata["simulation_end"],
+            "rainfall_event": rainfall_event,
             "metadata": {
                 "engine": "SWMM 5 (pyswmm)",
                 "scenario": scenario_name,
+                "simulation_start": spatial_metadata["simulation_start"],
+                "simulation_end": spatial_metadata["simulation_end"],
+                "rainfall_event": rainfall_event,
+                "coordinate_reference_system": None,
+                "coordinate_note": (
+                    "x/y are read from the SWMM [COORDINATES] section. "
+                    "No CRS is declared by this model, so latitude/longitude "
+                    "are null rather than inferred."
+                ),
                 "assumptions": config_data.get("assumptions", {}),
             },
             "summary": {
@@ -173,6 +277,8 @@ def run_swmm_simulation(
                 "flooded_nodes": flooded_nodes,
                 "maximum_depth_m": maximum_depth,
             },
+            # Kept as a compatibility alias used by earlier pipeline checks.
+            "max_system_depth_m": maximum_depth,
             "nodes": node_results,
             "conduits": conduit_results,
         }

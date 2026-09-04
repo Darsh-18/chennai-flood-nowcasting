@@ -131,6 +131,7 @@ async def simulate(request: SimulationRequest) -> dict:
         inp_path=inp_path,
         scenario_name=request.scenario,
         scenario_applied=True,
+        rainfall_csv_path=request.rainfall_csv_path,
     )
 
     # ------------------------------------------------------------------
