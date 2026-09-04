@@ -169,11 +169,14 @@ def test_rainfall_values_non_negative():
 # ---------------------------------------------------------------------------
 
 def test_rainfall_record_count():
-    """IMERG 2015 event should have ~335 half-hourly records (2015-11-28 to 2015-12-04)."""
+    """IMERG 2015 event has exactly 335 half-hourly records (2015-11-28 to 2015-12-04).
+    7 days * 48 half-hours = 336 expected intervals minus 1 missing satellite timestep at 2015-12-01 01:00.
+    Total CSV lines = 336 (1 header + 335 data rows).
+    """
     assert RAINFALL_CSV.exists()
     with open(RAINFALL_CSV, newline="", encoding="utf-8") as fh:
         n = sum(1 for _ in csv.DictReader(fh))
-    assert n >= 300, f"Expected ~335 records, got {n}; check IMERG conversion."
+    assert n == 335, f"Expected exactly 335 records (336 expected minus 1 gap at 12/01/2015 01:00), got {n}."
 
 
 # ---------------------------------------------------------------------------
@@ -413,7 +416,7 @@ def test_swmm_gpkg_schema():
         pytest.skip("geopandas not available")
 
     gdf = gpd.read_file(SWMM_GPKG, layer="swmm_flood_nodes")
-    required_cols = {"swmm_node_id", "depth_m", "flooded", "scenario", "geometry"}
+    required_cols = {"swmm_node_id", "depth_m", "flooded", "scenario", "timestamp", "geometry"}
     missing = required_cols - set(gdf.columns)
     assert not missing, f"GeoPackage missing columns: {missing}"
     assert gdf.crs is not None, "GeoPackage has no CRS"
@@ -463,3 +466,52 @@ def test_scenario_comparison_report():
         assert "max_node_depth_m" in sc_data
         assert "max_conduit_flow_cms" in sc_data
         assert "status" in sc_data
+
+
+# ---------------------------------------------------------------------------
+# Test 21: Road impact explicitly labeled as prototype drainage proxy
+# ---------------------------------------------------------------------------
+
+def test_road_impact_prototype_disclaimer():
+    """Road impact output must clearly declare itself as prototype drainage proxy."""
+    road_meta_path = PROJECT_ROOT / "member4_gis" / "outputs" / "road_impact" / "road_impact_metadata.json"
+    assert road_meta_path.exists(), "road_impact_metadata.json missing"
+    with open(road_meta_path) as f:
+        meta = json.load(f)
+    assert "disclaimer" in meta
+    assert "NOT actual road flood risk" in meta["disclaimer"]
+    assert meta.get("data_classification") == "prototype_drainage_proxy_impact"
+
+
+# ---------------------------------------------------------------------------
+# Test 22: DEM metadata validity
+# ---------------------------------------------------------------------------
+
+def test_dem_metadata_valid():
+    """DEM metadata must exist and confirm Copernicus GLO-30 specifications."""
+    dem_meta_path = PROJECT_ROOT / "member4_gis" / "data" / "dem" / "dem_metadata.json"
+    assert dem_meta_path.exists(), "dem_metadata.json missing"
+    with open(dem_meta_path) as f:
+        dem_meta = json.load(f)
+    assert dem_meta.get("status") == "OK"
+    assert dem_meta.get("crs") == "EPSG:4326"
+    assert dem_meta.get("width_px") == 2520
+    assert dem_meta.get("height_px") == 2160
+    assert "land_elevation_statistics" in dem_meta
+
+
+# ---------------------------------------------------------------------------
+# Test 23: Historical flood features count
+# ---------------------------------------------------------------------------
+
+def test_historical_flood_features():
+    """Historical flood dataset must contain 4,001 unique observed features."""
+    hist_meta_path = PROJECT_ROOT / "member4_gis" / "data" / "historical_flood" / "historical_flood_metadata.json"
+    assert hist_meta_path.exists(), "historical_flood_metadata.json missing"
+    val_report_path = PROJECT_ROOT / "member4_gis" / "validation" / "validation_report.json"
+    assert val_report_path.exists(), "validation_report.json missing"
+    with open(val_report_path) as f:
+        val_report = json.load(f)
+    assert val_report.get("status") == "COMPLETE"
+    assert val_report.get("historical_data", {}).get("total_features") == 4001
+

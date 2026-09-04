@@ -1,26 +1,34 @@
 """
 road_impact.py
 ---------------
-Road flood impact assessment using SWMM flood node proximity.
+Prototype Drainage-Proxy Flood Impact Assessment (NOT Actual Road Data).
+
+CRITICAL NOTICE:
+  This is NOT actual road flood risk and must not be interpreted as road data.
+  No Chennai road centerline dataset exists in the repository.
+  Stormwater drainage channel geometries from `chennai_swd.gpkg` are used
+  strictly as a structural spatial proxy to validate the downstream GIS schema,
+  risk classification, and routing-cost interface.
+
+The intended eventual pipeline when actual road centerlines are available:
+  REAL ROAD CENTERLINES
+          +
+  SWMM FLOOD INFORMATION
+          ↓
+  SPATIAL INTERSECTION / PROXIMITY
+          ↓
+  ROAD FLOOD DEPTH
+          ↓
+  ROAD RISK / PASSABILITY
+          ↓
+  EXISTING ROUTING
 
 Pipeline:
   1. Load SWMM simulated flood nodes (all scenarios)
-  2. Load Chennai drainage GIS data as road proxy (no dedicated road dataset)
-  3. Apply proximity-based flood depth assignment
-  4. Classify road risk (safe / watch / likely / severe)
-  5. Write road_impact.gpkg and road_impact.csv
-
-DOCUMENTED METHOD:
-  - No dedicated Chennai road dataset is present in the repository.
-  - The drainage GeoPackage (chennai_swd.gpkg) contains stormwater drain
-    geometries, NOT roads. It is used here ONLY to demonstrate the spatial
-    pipeline structure.
-  - Flood depth assignment uses inverse-distance weighting from SWMM nodes
-    to drain centroids within a 5 km radius.
-  - SWMM node depth is NOT road surface inundation depth — it is hydraulic
-    node depth at the pipe outlet. The proximity transfer is an APPROXIMATION
-    for demonstration purposes only.
-  - Risk thresholds are documented below and are not calibrated.
+  2. Load Chennai drainage GIS data as spatial proxy (no dedicated road dataset)
+  3. Apply proximity-based flood depth assignment (IDW from SWMM nodes)
+  4. Classify risk (safe / watch / likely / severe)
+  5. Write prototype road_impact.gpkg and road_impact.csv with explicit proxy labels
 
 Risk thresholds (from integration_contract.md vocabulary):
   safe:   depth_proxy < 0.05 m
@@ -207,27 +215,31 @@ def main() -> None:
             depth_proxy = idw_depth(cx, cy, nodes_xy, nodes_depth)
             risk = classify_risk(depth_proxy)
 
-            # Build road_id from available attributes
-            drain_id = row.get("DRAIN_ID", row.get("drain_id", str(idx)))
-            road_geo_id = row.get("RD_GEO_ID", row.get("rd_geo_id", None))
-            road_id = f"drain-{drain_id}" if road_geo_id is None else f"road-{road_geo_id}"
+            # Drain ID proxy (RD_GEO_ID in KML is whitespace; use DRAIN_ID)
+            drain_id = str(row.get("DRAIN_ID", row.get("drain_id", str(idx)))).strip() or str(idx)
+            road_id = f"drain-proxy-{drain_id}"
 
             records.append({
-                "road_id":          road_id,
-                "drain_id":         str(drain_id),
-                "scenario":         scenario,
-                "event_id":         event_id,
-                "flood_depth_m":    round(depth_proxy, 4),
-                "risk":             risk,
-                "blocked":          risk == "severe",
-                "assessment_method": "idw_from_swmm_nodes",
-                "routing_cost":     _routing_cost(depth_proxy),
-                "crs":              "EPSG:4326",
-                "geometry":         row.geometry,
-                "model_type":       "synthetic_pilot_network",
+                "road_id":             road_id,
+                "drain_id":            drain_id,
+                "infrastructure_type": "drainage_channel_proxy",
+                "data_type":           "prototype_drainage_proxy",
+                "disclaimer":          "This is NOT actual road flood risk and must not be interpreted as road data.",
+                "scenario":            scenario,
+                "event_id":            event_id,
+                "flood_depth_m":       round(depth_proxy, 4),
+                "risk":                risk,
+                "blocked":             risk == "severe",
+                "assessment_method":   "idw_from_swmm_nodes",
+                "routing_cost":        _routing_cost(depth_proxy),
+                "crs":                 "EPSG:4326",
+                "geometry":            row.geometry,
+                "model_type":          "synthetic_pilot_network",
                 "note": (
-                    "flood_depth_m is an IDW proxy from SWMM node depths, "
-                    "NOT measured road inundation depth."
+                    "PROTOTYPE ONLY: This is NOT actual road flood risk and must not be "
+                    "interpreted as road data. No road network dataset exists in the repository. "
+                    "Stormwater drain geometries from chennai_swd.gpkg are used strictly as a "
+                    "structural spatial proxy to test downstream risk/routing pipeline integration."
                 ),
             })
 
@@ -269,6 +281,20 @@ def main() -> None:
     # Write metadata
     _write_metadata({
         "status": "OK",
+        "data_classification": "prototype_drainage_proxy_impact",
+        "disclaimer": "This is NOT actual road flood risk and must not be interpreted as road data.",
+        "notice": (
+            "No Chennai road centerline dataset is present in the repository. "
+            "Drainage channel geometries from data/processed/drainage/chennai_swd.gpkg "
+            "are used strictly as a structural spatial proxy to validate the downstream GIS schema, "
+            "risk categorization, and routing-cost interface. These drain segments must not be "
+            "represented as actual roads in the frontend, API, or decision-support interface."
+        ),
+        "eventual_pipeline": (
+            "REAL ROAD CENTERLINES + SWMM FLOOD INFORMATION -> "
+            "SPATIAL INTERSECTION / PROXIMITY -> ROAD FLOOD DEPTH -> "
+            "ROAD RISK / PASSABILITY -> EXISTING ROUTING"
+        ),
         "method": "inverse_distance_weighting_from_swmm_nodes",
         "proximity_radius_m": PROXIMITY_RADIUS_M,
         "drain_sample_size": min(DRAIN_SAMPLE, len(drain_gdf)),
@@ -277,13 +303,16 @@ def main() -> None:
         "risk_thresholds": {k: list(v) for k, v in RISK_THRESHOLDS.items()},
         "routing_integration": {
             "compatible_with": "integration_contract.md Section C",
-            "fields": ["road_id", "flood_depth_m", "risk", "routing_cost", "blocked", "scenario", "event_id"],
+            "fields": [
+                "road_id", "drain_id", "infrastructure_type", "data_type", "disclaimer",
+                "flood_depth_m", "risk", "routing_cost", "blocked", "scenario", "event_id"
+            ],
             "crs": "EPSG:4326",
         },
         "limitations": [
-            "No road dataset in repository; drain centroids used as road proxies.",
-            "IDW from 3 pilot nodes covering a 5 ha catchment to 10,255 drains is "
-            "not hydraulically meaningful at city scale.",
+            "This is NOT actual road flood risk and must not be interpreted as road data.",
+            "No road centerline dataset is present in repository; drain centroids used strictly as structural proxies.",
+            "IDW from 3 pilot nodes covering a 5 ha catchment to 10,255 drains is not hydraulically meaningful at city scale.",
             "flood_depth_m is a proximity-weighted proxy, NOT measured road inundation.",
             "Risk classification thresholds are not calibrated to Chennai conditions.",
         ],

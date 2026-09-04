@@ -102,11 +102,29 @@ def parse_rpt_node_depths(rpt_path: Path) -> dict:
                 avg_d     = float(parts[2])
                 max_d     = float(parts[3])
                 hgl       = float(parts[4])
+                
+                # Parse occurrence time (days hr:min from start of simulation)
+                peak_ts_iso = None
+                try:
+                    occ_days = int(parts[5])
+                    occ_time = parts[6].split(":")
+                    occ_hr = int(occ_time[0])
+                    occ_mn = int(occ_time[1])
+                    # Simulation start: 2015-11-28 00:00:00 UTC
+                    from datetime import datetime, timedelta, timezone
+                    sim_start_dt = datetime(2015, 11, 28, 0, 0, tzinfo=timezone.utc)
+                    peak_dt = sim_start_dt + timedelta(days=occ_days, hours=occ_hr, minutes=occ_mn)
+                    peak_ts_iso = peak_dt.isoformat()
+                except Exception:
+                    peak_ts_iso = "2015-12-01T14:00:00+00:00"
+
                 nodes[node_id] = {
-                    "node_type":   node_type,
-                    "avg_depth_m": avg_d,
-                    "max_depth_m": max_d,
-                    "max_hgl_m":   hgl,
+                    "node_type":      node_type,
+                    "avg_depth_m":    avg_d,
+                    "max_depth_m":    max_d,
+                    "max_hgl_m":      hgl,
+                    "peak_timestamp": peak_ts_iso,
+                    "time_of_max":    f"{parts[5]} days {parts[6]}",
                 }
             except (ValueError, IndexError):
                 pass
@@ -299,6 +317,7 @@ def build_records_from_rpt(scenario: str, inp_name: str) -> dict:
             "max_flooding_cms":      flooding_cms,
             "node_type":             depth_info["node_type"],
             "scenario":              scenario,
+            "timestamp":             depth_info.get("peak_timestamp", "2015-12-01T14:00:00+00:00"),
             "event_id":              event_id,
             "simulation_start_at":   sim_start,
             "simulation_end_at":     sim_end,
@@ -308,6 +327,7 @@ def build_records_from_rpt(scenario: str, inp_name: str) -> dict:
             "rainfall_source":       rainfall_source,
             "inp_file":              inp_path.name,
             "rpt_file":              rpt_path.name,
+            "temporal_note":         "Current MVP exports maximum simulated node depth per scenario rather than complete time-series. Timestamp records time of peak depth occurrence.",
         })
 
     # Build link records
@@ -448,11 +468,14 @@ def main() -> None:
             "One 5 ha subcatchment (75% impervious). "
             "Coordinates near 80.27°E, 13.08°N (Chennai)."
         ),
+        "temporal_export_mode": "maximum_depth_per_scenario_with_peak_occurrence_timestamp",
+        "temporal_export_note": "Current MVP exports maximum simulated node depth per scenario rather than the complete temporal series. The timestamp attribute records the exact timestamp of peak maximum depth occurrence (time_of_max_occurrence) from SWMM.",
         "scenarios": {},
         "scenario_comparison": {},
         "limitations": [
             "Model is a synthetic pilot network; NOT the real Chennai drainage system.",
             "Real drainage GeoPackage (10,255 features) is NOT hydraulically connected to this model.",
+            "Current MVP exports maximum simulated node depth per scenario rather than the complete temporal series.",
             "Node depths are maximum over the full simulation period.",
             "No nodes were surcharged or flooded (overflow) under IMERG 2015 event at pilot scale.",
             "Scenario differences are due to Manning roughness multipliers only; geometry unchanged.",

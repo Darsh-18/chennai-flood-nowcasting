@@ -1,267 +1,187 @@
 # Member 4 GIS — SWMM + GIS/DEM Flood Mapping Integration
-
-## Purpose
-
-This directory contains the Member 4 contribution to the Chennai Flood Nowcasting
-& Decision-Support System (SIH 2026). It integrates EPA SWMM hydraulic simulation
-outputs with GIS datasets to produce:
-
-- SWMM flood node GeoPackages (all 3 scenarios)
-- Scenario comparison reports
-- Road flood impact layers
-- Spatial validation reports
-- DEM and historical flood processing metadata
+**Chennai Flood Nowcasting & Decision-Support System (SIH 2026)**
+**Branch:** `module-3-nilesh`
 
 ---
 
-## Data Sources
+## 1. Executive Summary & Status Overview
 
-### Rainfall
-- **Source**: NASA GPM IMERG 30-minute half-hourly precipitation
-- **Event**: 2015-11-28 00:00 UTC → 2015-12-04 23:30 UTC (2015 Chennai flood event)
-- **File**: `data/rainfall/chennai_imerg_2015.csv` (336 rows)
-- **Column `rainfall_mm`**: IMERG precipitation rate in **mm/hr** (INTENSITY format), despite the column name
-- **Generation**: `scripts/rainfall/convert_imerg_to_swmm.py` (reads `data/raw/rainfall/chennai_imerg_2015.nc`)
+This module integrates EPA SWMM 5.2.4 hydraulic modeling outputs with spatial GIS/DEM datasets for Chennai.
 
-### SWMM Model
-- **Type**: Synthetic 3-node pilot network (NOT the real Chennai drainage system)
-- **File**: `swmm_engine/models/pilot_network.inp`
-- **Nodes**: J1 (junction, elev 10 m), J2 (junction, elev 8.5 m), OUT1 (free outfall, elev 7 m)
-- **Conduits**: C1 (J1→J2, 300 m, 1.2 m diameter), C2 (J2→OUT1, 150 m, 1.2 m diameter)
-- **Subcatchment**: S1 — 5 ha, 75% impervious, Horton infiltration
-- **Coordinates**: EPSG:4326 (geographic — longitude/latitude)
-  - J1: 80.2707°E, 13.0827°N
-  - J2: 80.2735°E, 13.0850°N
-  - OUT1: 80.2760°E, 13.0872°N
-
-### Chennai Stormwater Drainage GIS
-- **File**: `data/processed/drainage/chennai_swd.gpkg`
-- **Features**: 10,255 MultiLineString drainage geometries
-- **CRS**: EPSG:4326
-- **Attributes include**: DRAIN_ID, DRAIN_LEN, DRAIN_WID, DRAIN_DEP, INVERT_SP, INVERT_EP, STATUS, WARD, ZONE, ST_NAME, RD_GEO_ID
-- **STATUS**: This dataset contains real Chennai stormwater drain geometries but is **NOT hydraulically connected to the SWMM pilot model**. They are separate systems.
-
-### DEM
-- **Expected**: `Datasets/DEM/chennai_dem_glo30.tif` (Copernicus GLO-30, ~30 m resolution)
-- **Status**: ⚠️ FILE MISSING — not present in the local repository
-- **See**: `member4_gis/data/dem/dem_metadata.json` for missing-file documentation
-
-### Historical Flood Data
-- **Expected**: `Datasets/Historical Flood Events/`
-- **Status**: ⚠️ DIRECTORY MISSING — only `Datasets/IMERG_2015/` is present
-- **See**: `member4_gis/data/historical_flood/historical_flood_metadata.json`
+| Category | Component | Status | Description |
+|---|---|---|---|
+| **Data** | NASA GPM IMERG 2015 Rainfall | **REAL** | 335 records (30-min intervals), Nov 28 – Dec 04 2015 |
+| **Data** | Copernicus GLO-30 DEM | **REAL** | 30 m resolution, 2520×2160 pixels, EPSG:4326 |
+| **Data** | Historical Flood Extents | **REAL** | 4,001 observed flood extent polygons from 2015 Chennai disaster |
+| **Data** | Chennai Municipal SWD GIS | **REAL** | 10,255 stormwater drain line features from Greater Chennai Corp |
+| **Data** | Road Centerlines | **MISSING** | No road centerline dataset exists in the repository |
+| **Engine**| SWMM Hydraulic Modeling | **WORKING**| All 3 scenarios runnable, real IMERG rainfall injected |
+| **Engine**| SWMM → GIS Layer Export | **WORKING**| GeoPackage & CSV outputs with peak occurrence timestamps |
+| **GIS**   | Spatial Validation | **WORKING**| Distance metrics computed; explicitly notes pilot model limitation |
+| **GIS**   | Road Impact Assessment | **PROTOTYPE PROXY**| **NOT actual road data**; uses drain geometries as structural proxy |
+| **GIS**   | Continuous Flood Raster | **NOT CLAIMED**| Point-based flood nodes only; no 3-point raster interpolation |
 
 ---
 
-## Directory Structure
+## 2. Definitive Classification of Deliverables
 
+### A. WHAT IS REAL
+- **IMERG Rainfall**: Actual NASA GPM satellite precipitation data (`data/rainfall/chennai_imerg_2015.csv`) for the 2015 Chennai flood event.
+- **Chennai DEM**: Real Copernicus GLO-30 Digital Surface Model (`Datasets/DEM/chennai_dem_glo30.tif`).
+- **Chennai Historical Flood Extent**: Real observed flood polygons (`Datasets/Histoical Flood Events/chennai_flood_extent_2015.gpkg`) containing 4,001 features from the 2015 flood disaster.
+- **Chennai Drainage GIS**: Real municipal stormwater drainage network (`data/processed/drainage/chennai_swd.gpkg`) with 10,255 features.
+
+### B. WHAT IS WORKING
+- **SWMM Rainfall Injection**: `swmm_engine/rainfall.py::inject_rainfall()` dynamically parses the IMERG CSV and writes a 335-entry `[TIMESERIES]` into the SWMM `.inp` file.
+- **SWMM Scenarios**:
+  - `normal` (Manning roughness multiplier 1.0×, n=0.013) → max node depth **0.28 m**
+  - `reduced_capacity` (Manning roughness multiplier 1.6×, n=0.0208) → max node depth **0.36 m**
+  - `severe_blockage` (Manning roughness multiplier 2.5×, n=0.0325) → max node depth **0.47 m**
+  - Depth increase normal → severe blockage is **+0.19 m (+67.9%)**, demonstrating hydraulic head elevation and backwater flow resistance.
+- **SWMM Result Extraction**: `generate_outputs_from_rpt.py` accurately extracts junction depths, conduit flows, runoff volumes, and peak timestamps.
+- **SWMM → GIS GeoPackage**: Generates `member4_gis/outputs/swmm_flood_nodes/swmm_flood_nodes.gpkg` (EPSG:4326, 9 features across 3 scenarios).
+- **DEM Metadata Inspection**: `dem_inspector.py` extracts raster bounds, pixel sizes, and computes separated land terrain vs. marine artifact statistics.
+- **Historical Flood Processing**: `historical_flood_processor.py` converts raw spatial observations to clean GeoPackage format.
+- **Spatial Validation**: `validation.py` re-projects to UTM 44N and computes nearest-neighbor distances between SWMM nodes and observed historical flood extents.
+
+### C. WHAT IS MVP / PARTIAL
+- **Point-Based Flood Representation**: Simulated flood nodes are represented as discrete points with maximum depth attributes. No continuous raster is generated.
+- **Maximum Depth Export**: Current MVP exports maximum simulated node depth per scenario rather than the complete 336-step temporal series. The `timestamp` column records the exact timestamp of peak maximum depth occurrence (`time_of_max_occurrence`) from SWMM.
+- **Backend Integration**: The application backend (`backend/app/`) consists strictly of compiled `.pyc` bytecode without source files. All integration is via clean file-based GIS contracts.
+- **Road Impact Assessment**: **PROTOTYPE DRAINAGE-PROXY ONLY.** See Section 4 below.
+
+### D. WHAT IS NOT CURRENTLY CLAIMED
+- **NO Full Chennai Hydraulic Model**: The SWMM model is a 3-node pilot network covering a 5 ha subcatchment, not the entire municipal drainage network.
+- **NO Hydraulic Connection between Drainage GIS and SWMM**: The 10,255 drainage features in `chennai_swd.gpkg` are not converted into a connected SWMM hydraulic graph.
+- **NO City-Scale Continuous Flood Raster**: Interpolating a continuous inundation surface across 1,000 km² from 3 pilot points is hydraulically invalid and is strictly avoided.
+- **NO Actual Road Flood Risk**: No road centerline dataset exists in the repository.
+- **NO Real-Time or AI/ML Predictions**: All hydraulic results originate from physical dynamic-wave SWMM 5.2 simulations.
+
+---
+
+## 3. Verified Rainfall Dataset QA
+
+| Property | Verified Value | Documentation / Notes |
+|---|---|---|
+| **File Path** | `data/rainfall/chennai_imerg_2015.csv` | Preprocessed from NASA GPM IMERG NetCDF4 |
+| **Total Rows** | **335 data rows** | Plus 1 header row = 336 lines in file |
+| **Unique Timestamps**| **335** | No duplicate timestamps |
+| **First Timestamp** | `11/28/2015 00:00` | Start of simulation |
+| **Last Timestamp** | `12/04/2015 23:30` | End of simulation |
+| **Timestep Interval**| **30 minutes** | Nominal half-hourly satellite product |
+| **Missing Timestep** | **12/01/2015 01:00** | 1 missing interval in GPM data (delta = 1 hr between row 145 & 146) |
+| **Units** | **mm/hr (Intensity)** | Column name is `rainfall_mm`, but values are intensity rates in mm/hr |
+| **Min / Max / Mean** | 0.00 / 24.74 / 2.30 mm/hr | Zero negative values |
+| **Total Injected Precip** | **384.708 mm** | Verified in SWMM runoff continuity report; matches sum of (rate * 0.5 hr) = 384.88 mm within 0.04% |
+| **Records into SWMM**| **335 `TS_RAIN` lines** | Verified in `direct_injected_*.inp` `[TIMESERIES]` section |
+
+---
+
+## 4. Road Flood Impact: Critical Disclaimer & Prototype Explanation
+
+> **CRITICAL NOTICE ON ROAD IMPACT DATA:**
+> **This is NOT actual road flood risk and must not be interpreted as road data.**
+> No Chennai road network or road centerline dataset exists in the repository.
+
+### Prototype Drainage-Proxy Method
+1. **Source Geometry**: 500 sampled stormwater drainage channel segments from `data/processed/drainage/chennai_swd.gpkg`.
+2. **Transfer Mechanism**: Inverse Distance Weighting (IDW, power=2, radius=5 km) from the 3 pilot SWMM nodes to drainage channel centroids.
+3. **Purpose**: Used strictly as a structural spatial placeholder to validate the downstream schema, risk categorization (`safe`, `watch`, `likely`, `severe`), and routing-cost interface required by `docs/integration_contract.md`.
+4. **Data Tagging**: Every record in `road_impact.csv` and `road_impact.gpkg` explicitly carries:
+   - `infrastructure_type`: `"drainage_channel_proxy""
+   - `data_type`: `"prototype_drainage_proxy""
+   - `disclaimer`: `"This is NOT actual road flood risk and must not be interpreted as road data.""
+   - `road_id`: `"drain-proxy-<DRAIN_ID>""
+
+### Correct Eventual Road Integration Pipeline
+When an actual Chennai road centerline dataset (e.g. OSM highways or municipal road GIS) is acquired:
 ```
-member4_gis/
-├── README.md                           ← This file
-├── scripts/
-│   ├── generate_outputs_from_rpt.py    ← PRIMARY: RPT → CSV + GPKG + comparison JSON
-│   ├── swmm_to_gis.py                  ← Alternative: runs SWMM live + produces GIS outputs
-│   ├── dem_inspector.py                ← Inspects chennai_dem_glo30.tif
-│   ├── historical_flood_processor.py   ← Converts historical flood data to GPKG
-│   ├── road_impact.py                  ← Road/drain flood impact (IDW from SWMM nodes)
-│   ├── validation.py                   ← SWMM vs historical spatial validation
-│   └── run_member4_pipeline.sh         ← Shell script to run all scripts
-├── tests/
-│   └── test_member4_gis.py             ← Pytest test suite (21 tests)
-├── data/
-│   ├── dem/
-│   │   └── dem_metadata.json           ← DEM status (MISSING)
-│   └── historical_flood/
-│       └── historical_flood_metadata.json  ← Historical data status (MISSING)
-├── outputs/
-│   ├── swmm_flood_nodes/
-│   │   ├── swmm_flood_nodes.csv        ← 9 rows (3 nodes × 3 scenarios)
-│   │   ├── swmm_flood_nodes.gpkg       ← GeoPackage, EPSG:4326, layer=swmm_flood_nodes
-│   │   ├── swmm_conduit_results.csv    ← 6 rows (2 conduits × 3 scenarios)
-│   │   └── scenario_comparison.json    ← Full comparison report
-│   ├── flood_maps/                     ← (no raster flood map; points-only MVP)
-│   └── road_impact/
-│       ├── road_impact.csv             ← 1500 rows (500 drain segments × 3 scenarios)
-│       ├── road_impact.gpkg            ← GeoPackage, EPSG:4326, layer=road_flood_impact
-│       └── road_impact_metadata.json   ← Method documentation
-└── validation/
-    └── validation_report.json          ← Spatial validation report
-```
-
----
-
-## SWMM Scenarios
-
-| Scenario | Manning n multiplier | Conduit n | Description |
-|----------|---------------------|-----------|-------------|
-| normal | 1.0× | 0.013 | Clean drainage, full capacity |
-| reduced_capacity | 1.6× | 0.0208 | 40% blockage equivalent |
-| severe_blockage | 2.5× | 0.0325 | 70% blockage, backwater effects |
-
-### Simulation Results (IMERG 2015-11-28 to 2015-12-04)
-
-| Node | normal depth | reduced_capacity depth | severe_blockage depth |
-|------|-------------|----------------------|----------------------|
-| J1 | 0.28 m | 0.36 m | **0.47 m** |
-| J2 | 0.23 m | 0.29 m | **0.39 m** |
-| OUT1 | 0.23 m | 0.29 m | 0.29 m |
-
-**Depth increase (normal → severe blockage): +0.19 m (+67.9%)**
-
-No nodes reached overflow (flooding) at pilot scale under this event.
-
----
-
-## SWMM → GIS Process
-
-1. **Source**: Existing `.rpt` output files (`swmm_engine/outputs/direct_injected_*.rpt`)
-   - These were produced by running SWMM with real IMERG rainfall injected
-2. **Coordinate extraction**: Node coordinates read from `[COORDINATES]` section of `.inp` files
-3. **CRS**: EPSG:4326 (pilot model uses geographic coordinates lon/lat)
-4. **Output format**: GeoPackage (GPKG) with `Point` geometry per node per scenario
-
-### GeoPackage Schema
-
-```
-swmm_flood_nodes.gpkg  (layer: swmm_flood_nodes)
-├── swmm_node_id    TEXT    — node identifier (J1, J2, OUT1)
-├── x               REAL    — longitude (EPSG:4326)
-├── y               REAL    — latitude (EPSG:4326)
-├── depth_m         REAL    — maximum hydraulic depth over simulation period (m)
-├── avg_depth_m     REAL    — average hydraulic depth (m)
-├── max_hgl_m       REAL    — maximum hydraulic grade line elevation (m)
-├── flooded         BOOL    — True if overflow occurred (all False for this event)
-├── max_flooding_cms REAL   — peak flooding rate (m³/s)
-├── node_type       TEXT    — JUNCTION or OUTFALL
-├── scenario        TEXT    — normal | reduced_capacity | severe_blockage
-├── event_id        TEXT    — e.g. imerg-2015-11-28_normal
-├── simulation_start_at TEXT — ISO 8601
-├── simulation_end_at   TEXT — ISO 8601
-├── source          TEXT    — swmm_rpt_node_depth_summary
-├── model_type      TEXT    — synthetic_pilot_network
-├── crs             TEXT    — EPSG:4326
-├── rainfall_source TEXT    — NASA GPM IMERG ...
-├── inp_file        TEXT    — source .inp filename
-├── rpt_file        TEXT    — source .rpt filename
-└── geometry        GEOMETRY — Point (EPSG:4326)
+REAL ROAD CENTERLINES + SWMM FLOOD INFORMATION
+        ↓
+SPATIAL INTERSECTION / PROXIMITY
+        ↓
+ROAD FLOOD DEPTH
+        ↓
+ROAD RISK / PASSABILITY CLASSIFICATION
+        ↓
+EXISTING ROUTING ENGINE
 ```
 
 ---
 
-## CRS Handling
+## 5. Copernicus GLO-30 DEM Quality Assurance
 
-- **Pilot SWMM model**: EPSG:4326 (longitude, latitude in decimal degrees)
-- **All GIS outputs**: EPSG:4326
-- **Distance/area computations** (road impact, validation): EPSG:32644 (UTM Zone 44N)
-- **Note**: The SWMM `[COORDINATES]` section stores geographic coordinates for this model.
-  This is valid for visualization but not for hydraulic accuracy — SWMM internally
-  computes distances from conduit `Length` fields, not from coordinate differences.
+| Parameter | Value | Notes |
+|---|---|---|
+| **Source Path** | `Datasets/DEM/chennai_dem_glo30.tif` | 15 MB GeoTIFF |
+| **CRS** | `EPSG:4326` (WGS84) | 1 arc-second (0.00027778°) |
+| **Dimensions** | 2,520 columns × 2,160 rows | **5,443,200 total pixels** |
+| **Pixel Resolution**| ≈ **30.92 m** | Consistent with Copernicus GLO-30 specifications |
+| **Bounding Box** | 79.80°–80.50°E, 12.70°–13.30°N | Spans Greater Chennai and surrounding catchment |
+| **NoData Tag** | `None` | GeoTIFF header does not declare an explicit nodata value |
+| **Land Elevation (>= 0 m)**| **0.0 m to 313.62 m** | **Mean: 23.10 m, Median: 17.51 m, Std: 23.68 m** (5,442,358 pixels = 99.98% of raster) |
+| **Hydro-flattened Ocean**| **0.0 m** | 1,713,353 pixels (31.48% of raster) over Bay of Bengal |
+| **Negative Artifacts (< 0 m)**| **-65.55 m to -0.00 m** | **842 pixels (0.015% of raster)** |
 
----
-
-## Flood Mapping Methodology
-
-**MVP type**: Simulated flood nodes (points), not a continuous flood raster.
-
-1. SWMM produces maximum node depth for each junction over the simulation period
-2. Each node is a Point in EPSG:4326
-3. `depth_m` = hydraulic node depth (pipe crown to water surface), NOT road surface water depth
-4. No hydraulic flood raster is generated because:
-   - The pilot network has only 3 nodes
-   - DEM file is missing from the repository
-   - Interpolating 3 points to a flood raster is not hydraulically defensible
-
-A future enhancement would use a spatially distributed SWMM model with the real
-drainage GeoPackage converted to SWMM format, plus the GLO-30 DEM for terrain-guided
-flood spreading.
+### Explanation of Negative Elevation Values
+The reported minimum elevation of -65.55 m is **not bathymetry**.
+Copernicus GLO-30 is derived from radar interferometry (TanDEM-X). Over open water (the eastern 31% of the raster is the Bay of Bengal), radar beams experience specular reflection and phase decorrelation. While Copernicus applied a water body mask to hydro-flatten ocean to 0 m, 842 fringe pixels along the coastline and tidal estuaries contain residual radar noise and void-fill artifacts.
+**Hydrological Recommendation**: Downstream 2D overland flow algorithms should clamp DEM elevations to >= 0.0 m (`np.clip(dem, 0.0, None)`) to prevent artificial sinks.
 
 ---
 
-## Road Integration
+## 6. Spatial Validation: Observed vs. Simulated
 
-**Method**: Inverse-Distance Weighting (IDW) from SWMM node depths to drain centroids.
+| Parameter | Value | Context |
+|---|---|---|
+| **Observed Flood Features**| **4,001 unique polygons** | Extracted from `chennai_flood_extent_2015.gpkg` (2015 Chennai floods) |
+| **Simulated Nodes** | 3 pilot nodes (`J1`, `J2`, `OUT1`) | Normal scenario (elevations 10.0, 8.5, 7.0 m) |
+| **Sample Size** | 500 random historical centroids | Sampled across the 4,001 features |
+| **Tolerance Distance** | 2,000 m (2 km) | Spatial proximity threshold |
+| **Within 2 km** | **2.2%** (11 points) | Points within 2 km of pilot network |
+| **Mean Nearest Distance** | **22.86 km** | Physical distance from city neighborhoods to pilot |
+| **Min Distance** | **424.4 m** | Nearest observed flood polygon to pilot node J1 |
+| **Max Distance** | **92.84 km** | Outermost regional flood polygon in extent dataset |
 
-- Source: 500 sampled features from `data/processed/drainage/chennai_swd.gpkg`
-- SWMM node depths are spatially transferred to each drain centroid within 5 km
-- `flood_depth_m` in road_impact output is an **approximation/proxy**, not measured inundation
-- Risk classification: `safe` (<0.05m), `watch` (0.05–0.20m), `likely` (0.20–0.50m), `severe` (≥0.50m)
-- **LIMITATION**: No dedicated road dataset; drain geometries used as road proxy
-
-### Integration Contract Compatibility
-
-The road impact output is compatible with `docs/integration_contract.md` Section C:
-```
-road_id, flood_depth_m, risk, routing_cost, blocked, scenario, event_id, geometry (EPSG:4326)
-```
-
----
-
-## Validation
-
-**Status**: LIMITED — historical flood data not available in repository.
-
-When historical flood data is added to `Datasets/Historical Flood Events/`, the
-`validation.py` script will:
-1. Load historical flood GeoPackages
-2. Compute nearest-neighbour distances (SWMM nodes → historical points)
-3. Report % within 2 km tolerance
-4. Note all relevant limitations
-
-**Expected result**: Very poor coverage metrics, because the SWMM pilot covers
-only 5 ha near one location, while historical floods covered all of Chennai.
+### Explicit Distinction: Model Limitation vs. Code Failure
+- **Validation Code Status: 100% CORRECT.** The spatial nearest-neighbor search executes without error in projected UTM 44N coordinates.
+- **Cause of Low Match Rate: MODEL SCALE LIMITATION.** The 3 pilot SWMM nodes represent a single 5-hectare local drainage catchment at 80.27°E, 13.08°N. The historical flood extent dataset covers the entire Chennai Metropolitan Area (over 1,000 km²). An average distance of 22.86 km is the expected physical geographic separation between other parts of Chennai and this pilot site. A high validation match rate requires a distributed, city-wide SWMM network.
 
 ---
 
-## How to Run
+## 7. SWMM → GIS Data Contract Specification
 
+All simulation outputs are exported to `member4_gis/outputs/swmm_flood_nodes/`:
+
+### `swmm_flood_nodes.gpkg` (Layer: `swmm_flood_nodes`, CRS: `EPSG:4326`)
+- `swmm_node_id` (Text): Pilot junction identifier (`J1`, `J2`, `OUT1`)
+- `x`, `y` (Float): Coordinates in decimal degrees WGS84
+- `depth_m` (Float): Maximum hydraulic water depth over the simulation period (m)
+- `avg_depth_m` (Float): Simulation-period average depth (m)
+- `max_hgl_m` (Float): Maximum Hydraulic Grade Line elevation (m)
+- `flooded` (Boolean): Overflow status (`False` for pilot scale under this event)
+- `max_flooding_cms` (Float): Peak surface overflow discharge (m³/s)
+- `node_type` (Text): `JUNCTION` or `OUTFALL`
+- `scenario` (Text): `normal` | `reduced_capacity` | `severe_blockage`
+- `timestamp` (ISO-8601): Exact occurrence timestamp of peak flood depth (`2015-12-01T14:00:00+00:00` for J1)
+- `event_id` (Text): Scenario-event tag (e.g. `imerg-2015-11-28_normal`)
+- `temporal_note` (Text): Explicit notice regarding maximum-depth MVP export
+- `geometry` (Point): WGS84 Point geometry
+
+---
+
+## 8. Automated Test Suite
+
+Run tests via:
 ```bash
-# From project root, activate backend venv:
-cd /path/to/chennai-flood-nowcasting
-source backend/.venv/bin/activate
-
-# 1. Generate GIS outputs from existing .rpt files (fast, no SWMM rerun needed):
-PYTHONPATH=. python3 member4_gis/scripts/generate_outputs_from_rpt.py
-
-# 2. Or run SWMM live and generate GIS (slower, requires pyswmm):
-PYTHONPATH=. python3 member4_gis/scripts/swmm_to_gis.py
-
-# 3. DEM inspector (requires Datasets/DEM/chennai_dem_glo30.tif):
-PYTHONPATH=. python3 member4_gis/scripts/dem_inspector.py
-
-# 4. Historical flood processor (requires Datasets/Historical Flood Events/):
-PYTHONPATH=. python3 member4_gis/scripts/historical_flood_processor.py
-
-# 5. Road flood impact:
-PYTHONPATH=. python3 member4_gis/scripts/road_impact.py
-
-# 6. Spatial validation:
-PYTHONPATH=. python3 member4_gis/scripts/validation.py
-
-# 7. Run tests:
-PYTHONPATH=. python3 -m pytest member4_gis/tests/test_member4_gis.py -v
+PYTHONPATH=. backend/.venv/bin/python3 -m pytest member4_gis/tests/test_member4_gis.py -v
 ```
 
----
-
-## Limitations
-
-1. **Synthetic pilot network**: SWMM model is a 3-node synthetic network, NOT calibrated
-   to real Chennai drainage geometry.
-2. **No GIS-SWMM hydraulic connection**: The 10,255-feature drainage GeoPackage is independent
-   of the SWMM model. They have not been connected into a unified hydraulic network.
-3. **DEM missing**: `Datasets/DEM/chennai_dem_glo30.tif` was not present in the repository.
-   No DEM-based terrain analysis could be performed.
-4. **Historical flood data missing**: No observed flood extent/point data was available.
-   Validation is limited to documentation of the limitation.
-5. **No road dataset**: No dedicated Chennai road network dataset is in the repository.
-   Drain geometries were used as a proxy for the road impact layer.
-6. **Flood map is points-only**: No continuous flood raster exists; only 3 simulated nodes.
-7. **3-second simulation**: The 2015 IMERG event (384 mm total precipitation) did not cause
-   flooding (overflow) at any node at the pilot scale. Conduits were operating at 11–28%
-   of full capacity in the normal scenario.
-8. **Rainfall column name**: `rainfall_mm` in the IMERG CSV is actually mm/hr (intensity),
-   consistent with SWMM's INTENSITY rain gage format.
-
----
-
-*Member 4 GIS implementation — SIH 2026 Chennai Flood Nowcasting*
+The test suite contains **24 automated tests** covering:
+- Exact 335 rainfall record count and timestamp validity
+- SWMM model configuration, node coordinates, and scenario roughness multipliers
+- Output schema verification including mandatory `timestamp` field
+- Road impact prototype disclaimer and proxy classification
+- DEM metadata validity (2520×2160, EPSG:4326, land elevation stats)
+- Historical flood dataset integrity (4,001 unique features)
+- Hydraulic ordering (depth normal <= depth reduced <= depth severe)
